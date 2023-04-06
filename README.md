@@ -1,2 +1,2 @@
-# DISSNELAND-GAME-SDL
-bài tập lớn lập trình nâng cao :V
+# UET_Danmaku
+a curtain fire shooting game. girls are now preparing, please wait warmly.
