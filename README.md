@@ -1,2 +1,2 @@
-# UET_Danmaku
-a curtain fire shooting game. girls are now preparing, please wait warmly.
+# UET_DISSNELAND_GAME_SDL
+bài tập lớn lập trình nâng cao
