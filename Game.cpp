@@ -6,6 +6,7 @@
 #include "Collision.h"
 #include "AssetManager.h"
 #include <SDL2/SDL_ttf.h>
+#include <sstream>
 
 
 
@@ -161,8 +162,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH);
 	player.addGroup(groupPlayers);
 
-	SDL_Color white = { 255, 255, 255, 255 };
-	label.addComponent<FontLabel>(10, 10, "Test String", "arial", white);
+	SDL_Color RED = {255, 0, 0, 255};
+	SDL_Color BLACK = {0, 0, 0, 255};
+	SDL_Color WHITE = {255, 255, 255, 255};
+	label.addComponent<FontLabel>(10, 10, "Test String", "arial", WHITE);
 
 	/*enemy1.addComponent<TransformComponent>(600, 640, IDLE_PLAYER_HEIGHT, IDLE_PLAYER_WIDTH, 1);
 	enemy1.addComponent<SpriteComponent>("enemy1", aniEnemy1, sizeaniEnemy1);
@@ -229,6 +232,11 @@ void Game::update()
 	player.getComponent<KeyboardController>().hurtedTimer += dlTPlayer;
 	player.getComponent<KeyboardController>().slideTimer += dlTPlayer;
 	//std::cout << "slitetimer: " << player.getComponent<KeyboardController>().slideTimer << std::endl;
+
+	std::stringstream ss;
+	ss << "Player position: " << playerPos;
+
+	label.getComponent<FontLabel>().SetlabelText(ss.str(), "arial");
 
 	manager.refresh();
 	manager.update();

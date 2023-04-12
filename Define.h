@@ -1,6 +1,9 @@
 #pragma once
 #include "Animation.h"
+#include <SDL2/SDL.h>
 #include <vector>
+
+//define color
 
 #define OBJECT_WIDTH 32
 #define OBJECT_HEIGHT 32
@@ -76,7 +79,3 @@
 #define DEATH_ENEMY2_FRAMES 4
 #define DEATH_ENEMY2_WIDTH 60
 #define DEATH_ENEMY2_HEIGHT 53
-
-
-
-
