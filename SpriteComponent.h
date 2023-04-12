@@ -14,24 +14,21 @@ private:
 	SDL_Texture* texture;
 	SDL_Rect srcRect, destRect;
 
-	int frames = 0;
 	int speed = 100;
 	int width = 32;
 	int height = 32;
 
 public:
+	int frames = 0;
 	int timer = 0;
 	Uint32 periodTime = 0;
 	Uint32 latterTime = 0;
 	int deltaTime = 0;
 	int currentFrame = 0;
-	bool hit = 0;
-	bool unHit = 0;
-	bool unHitCheck = 0;
 	bool dead = 0;
 	bool stillDead = 0;
 	int index = 0;
-	bool check = 0;
+
 
 	std::map<std::string, std::map<int, Animation>> animations;
 
@@ -68,9 +65,7 @@ public:
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		currentFrame = 0;
-		unHit = 0;
 		timer = 0;
-		unHitCheck = 0;
 		periodTime = 0;
 		latterTime = SDL_GetTicks();
 		deltaTime = latterTime - periodTime;
@@ -136,7 +131,7 @@ public:
 		height = animations[animName][index].height;
 		
 		setTex(animName, index);
-		check = 1;
+		
 		
 		//std::cout << "width: " << width << "  height: " << height << std::endl;
 	}

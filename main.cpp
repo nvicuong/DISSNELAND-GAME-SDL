@@ -1,6 +1,8 @@
 #include "Game.h"
+#include "Menu.h"
 
 Game *game = nullptr;
+Menu* menu = nullptr;
 
 int main(int argc, char *argv[])
 {
@@ -12,18 +14,25 @@ int main(int argc, char *argv[])
 	int frameTime;
 	
 
-	std::cout << 2;
 	game = new Game();
-	game->init("DISSNELANDD", MAX_WIDTH_SCREEN, MAX_HEIGHT_SCREEN, false);
-
+	menu = new Menu();
+	game->init("DISSNELAND", MAX_WIDTH_SCREEN, MAX_HEIGHT_SCREEN, false);
+	menu->init();
 	while (game->running())
 	{
 		
 		frameStart = SDL_GetTicks();
-
+		if (menu->running())
+		{
+			menu->handleEvents();
+			menu->render();
+		}
+		else
+		{
 		game->handleEvents();
 		game->update();
 		game->render();
+		}
 
 		frameTime = SDL_GetTicks() - frameStart;
 

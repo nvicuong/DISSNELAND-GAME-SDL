@@ -9,68 +9,109 @@ class KeyboardController : public Component
 public:
 	bool hit = 0;
 	bool unKey = 0;
-	bool stopWalk = 0;
 	TransformComponent* transform;
 	SpriteComponent* sprite;
-	char stateKeyUp = '\0';
-	char stateKeyDown = '\0';
+
+	//bien kiem tra xem nhan vat co bi gay sat thuong khong
+	double hurtedTimer = 0;
+	double periodTime = 0;
+
+	//kiem tra qua trinh slide
+	bool slide;
+	double slideTimer = 1;
+
+	//kiem tra sat thuong len enemy
+	bool doHit = 0;
+	bool unHit = 0;
+	bool unHitCheck = 0;
 
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		sprite = &entity->getComponent<SpriteComponent>();
+		hurtedTimer = 1;
+		periodTime = SDL_GetTicks() / 1000;
+		slide = 0;
+		slideTimer = 1;
+		doHit = 0;
+		unHit = 0;
+		unHitCheck = 0;
+	}
+
+	void completedSlide()
+	{
+			if (sprite->currentFrame >= sprite->frames - 1)
+			{
+				slide = 0;
+				slideTimer = 0;
+				if (transform->velocity.x != 0 || transform->velocity.y != 0)
+				{
+					sprite->index = 1;
+				}
+				else { sprite->index = 0; }
+				/*sprite->index = 1;*/
+			}
+			else { sprite->index = 5; }
 	}
 
 	void update() override
 	{
 		//std::cout << "timer: " << sprite->timer << std::endl;
 		//std::cout << "currentFrames: " << sprite->currentFrame << std::endl;
+		//std::cout << "slide: " << slide << std::endl;
+		/*std::cout << "keyDown: " << stateKeyDown << std::endl
+		<< "keyUp:     " << stateKeyUp << std::endl << "---------------" << std::endl;*/
+		//std::cout << transform->velocity.x << " " << transform->velocity.y << std::endl;
+			//std::cout << "currentFrame = " << sprite->currentFrame << std::endl;
+		if (hurtedTimer < 0.5)
+		{
+			sprite->index = 2;
+			transform->velocity = Vector2D(0, 0);
+			sprite->Play("player");
+		}
+		else if (slide)
+		{
+			if (transform->velocity.x != 0 || transform->velocity.y != 0)
+			{
+				sprite->index = 1;
+			}
+			else { sprite->index = 0; }
+			completedSlide();
+			
+			sprite->Play("player");
+			/*transform->velocity.x *= 2;
+			transform->velocity.y *= 2;*/
+		}
+		else
+		{
 		if (Game::event.type == SDL_KEYDOWN && sprite->dead == 0)
 		{
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_w:
-				//std::cout << "W" << std::endl;
-				stateKeyDown = 'w';
 				transform->velocity.y = -1;
 				sprite->index = 1;
 				sprite->Play("player");
 				break;
 			case SDLK_a:
 				//std::cout << "A" << std::endl;
-				stateKeyDown = 'a';
 				transform->velocity.x = -1;
 				sprite->index = 1;
 				sprite->Play("player");
 				sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
-				stopWalk = 1;
 				break;
 			case SDLK_d:
-				//std::cout << "D" << std::endl;
-				/*if (stateKeyDown == 'a' && stateKeyUp != 'a')
-				{
-				}*/
-				stateKeyDown = 'd';
 				transform->velocity.x = 1;
 				sprite->index = 1;
 				sprite->spriteFlip = SDL_FLIP_NONE;
-				stopWalk = 0;
 				sprite->Play("player");
 				break;
 			case SDLK_s:
-				//std::cout << "S" << std::endl;
-				stateKeyDown = 's';
 				transform->velocity.y = 1;
 				sprite->index = 1;
 				sprite->Play("player");
 				break;
-			case SDLK_h:
-				stateKeyDown = 'h';
-				sprite->index = 2;
-				sprite->Play("player");
-				break;
 			case SDLK_j:
-				stateKeyDown = 'j';
 				if (unKey == 1)
 				{
 					sprite->currentFrame = 0;
@@ -79,33 +120,39 @@ public:
 				}
 				//std::cout << "j" << std::endl;
 				sprite->index = 3;
-				sprite->hit = 1;
+				doHit = 1;
 				sprite->Play("player");
 				//std::cout << "curren: " << sprite->currentFrame << std::endl;
-				if (sprite->hit == 1 && (sprite->currentFrame == 5 || sprite->currentFrame == 9) && sprite->unHitCheck == 0)
+				if (doHit == 1 && (sprite->currentFrame == 5 || sprite->currentFrame == 9) && unHitCheck == 0)
 				{
 					//std::cout << "...." << sprite->currentFrame << std::endl;
 					hit = 1;
-					sprite->unHit = 0;
-					sprite->unHitCheck = 1;
+					unHit = 0;
+					unHitCheck = 1;
 				}
 				else
 				{
 					hit = 0;
-					sprite->unHit = 1;
+					unHit = 1;
 				}
 				if (sprite->currentFrame != 3)
 				{
-					sprite->unHitCheck = 0;
+					unHitCheck = 0;
 				}
 				transform->velocity = Vector2D(0, 0);
 				
 				//stateKeyUp = 1;
 				break;
 			case SDLK_k:
-				stateKeyDown = 'k';
-				sprite->index = 4;
+				if (slideTimer > 1)
+				{
+					std::cout << slideTimer;
+				sprite->currentFrame = 0;
+				slide = 1;
+				//slideTimer = 0;
+				sprite->index = 5;
 				sprite->Play("player");
+				}
 				break;
 			default:
 				
@@ -120,89 +167,60 @@ public:
 			switch (Game::event.key.keysym.sym)
 			{
 			case SDLK_w:
-				//std::cout << "w up" << std::endl;
-				stateKeyUp = 'w';
 				unKey = 1;
 				transform->velocity.y = 0;
-				sprite->index = 0;
+				if (transform->velocity.x != 0 || transform->velocity.y != 0)
+				{
+					sprite->index = 1;
+				}
+				else { sprite->index = 0; }
 				sprite->Play("player");
 
 				break;
 			case SDLK_a:
-				//std::cout << "a up" << std::endl;
-				stateKeyUp = 'a';
-				unKey = 1;
-					transform->velocity.x = 1;
-				if (stateKeyDown == 'a' || stateKeyDown == 'w' || stateKeyDown == 's' || stateKeyDown == 'j')
+				if (transform->velocity.x != 0 || transform->velocity.y != 0)
 				{
+					sprite->index = 1;
+				}
+				else { sprite->index = 0; }
 				transform->velocity.x = 0;
-					stopWalk = 1;
-				}
-				
-				if (stateKeyDown == 'd')
-				{
-				sprite->index = 1;
-				stopWalk = 0;
-				}
-				else
-				{
-					sprite->index = 0;
-				}
 				sprite->Play("player");
 				break;
 
 			case SDLK_d:
-				//std::cout << "d up" << std::endl;
-				stateKeyUp = 'd';
-				unKey = 1;
-					transform->velocity.x = -1;
-				if (stateKeyDown == 'd' || stateKeyDown == 'w' || stateKeyDown == 's' || stateKeyDown == 'j')
+				if (transform->velocity.x != 0 || transform->velocity.y != 0)
 				{
-					transform->velocity.x = 0;
-
-					stopWalk = 1;
+					sprite->index = 1;
 				}
-				
-				if (stateKeyDown == 'a')
-				{
-				sprite->index = 1;
-				
-				}
-				else
-				{
-					sprite->index = 0;
-				}
+				else { sprite->index = 0; }
+				transform->velocity.x = 0;
 				sprite->Play("player");
 				break;
 
 			case SDLK_s:
-				//std::cout << "s up" << std::endl;
-				stateKeyUp = 's';
 				unKey = 1;
 				transform->velocity.y = 0;
-				sprite->index = 0;
-				sprite->Play("player");
-				break;
-
-			case SDLK_h:
-				stateKeyUp = 'h';
-				unKey = 1;
-				sprite->index = 0;
+				if (transform->velocity.x != 0 || transform->velocity.y != 0)
+				{
+					sprite->index = 1;
+				}
+				else { sprite->index = 0; }
 				sprite->Play("player");
 				break;
 
 			case SDLK_j:
-				//std::cout << "j up" << std::endl;
-				stateKeyUp = 'j';
 				unKey = 1;
 				sprite->index = 0;
-				sprite->hit = 0;
+				doHit = 0;
 				sprite->Play("player");
 				break;
 
 			case SDLK_k:
-				stateKeyUp = 'k';
-				sprite->index = 0;
+				if (transform->velocity.x != 0 || transform->velocity.y != 0)
+				{
+					sprite->index = 1;
+				}
+				else { sprite->index = 0; }
 				sprite->Play("player");
 				break;
 
@@ -225,17 +243,6 @@ public:
 			sprite->Play("player");
 			}
 		}
-		if (stateKeyUp == 'd' && stateKeyDown == 'a')
-		{
-			stopWalk = 0;
-		}
-		if ((stateKeyDown != 'w' && stateKeyDown != 'j' && stateKeyUp == 'w') || (stateKeyDown != 's' && stateKeyDown != 'j' && stateKeyUp == 's') || (stateKeyDown == 'w' && stateKeyUp == 'w') || (stateKeyDown == 's' && stateKeyUp == 's'))
-		{
-			if (!stopWalk)
-			{
-			sprite->index = 1;
-			sprite->Play("player");
-			}
 		}
 	
 	}

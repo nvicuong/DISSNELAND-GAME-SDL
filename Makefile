@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.cpp Game.cpp AssetManager.cpp Collision.cpp ECS.cpp Enemy1.cpp GameObject.cpp Map.cpp StatusComponet.cpp TextureManager.cpp Vector2D.cpp
+OBJS = main.cpp Game.cpp AssetManager.cpp Collision.cpp ECS.cpp Enemy1.cpp GameObject.cpp Map.cpp StatusComponet.cpp TextureManager.cpp Vector2D.cpp Menu.cpp
 
 #CC specifies which compiler we're using
 CC = g++
@@ -24,3 +24,4 @@ OBJ_NAME = main
 #This is the target that compiles our executable
 all : $(OBJS)
 	$(CC) -o $(OBJ_NAME) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
+	./$(OBJ_NAME)

@@ -14,8 +14,10 @@ public:
 	double periodTime = 0;
 	double timer = 0;
 	bool attacked;
-	bool check;
-	int hit = 0;
+	int hit;
+	//bien kiem tra xem enemy co bi gay sat thuong khong
+	double hurtedTimer = 0;
+	bool checkHurted = 0;
 	//SDL_Rect* eneRect;
 	Enemy1(int sp, std::string t) : speed(sp), tag(t)
 	{}
@@ -28,10 +30,10 @@ public:
 		sprite->index = 0;
 		periodTime = SDL_GetTicks()/1000;
 		timer = 5;
+		hurtedTimer = 2;
 		hit = 0;
+		checkHurted = 0;
 		attacked = 0;
-		check = 0;
-		unAttack = 0;
 		transform->velocity.x = -1;
 		transform->velocity.y = 0;
 		transform->speed = 1;
@@ -53,15 +55,16 @@ public:
 
 	Vector2D getVel(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void walkAround();
+	bool completedAttack();
 	void fireGun(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets);
-	void huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
-	void attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP, bool attacked);
+	bool huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
+	void attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
+	void getHurt();
 
 private:
 	TransformComponent* transform;
 	SpriteComponent* sprite;
 	std::string tag;
-	bool unAttack = 0;
 	int speed = 0;
 	int distance = 0;
 };

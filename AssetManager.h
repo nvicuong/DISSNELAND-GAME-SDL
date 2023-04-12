@@ -6,6 +6,7 @@
 #include "Vector2D.h"
 #include "ECS.h"
 #include <vector>
+#include <SDL2/SDL_ttf.h>
 
 
 class AssetManager
@@ -25,7 +26,11 @@ public:
 	void AddTexture(std::string id, const char* path);
 	SDL_Texture* GetTexture(std::string id, int index);
 
+	void AddFont(std::string id, std::string path, int fontSize);
+	TTF_Font* GetFont(std::string id);
+
 private:
 	Manager* manager;
 	std::map<std::string, std::vector<SDL_Texture*>> textures;
+	std::map<std::string, TTF_Font*> fonts;
 };

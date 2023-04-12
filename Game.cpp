@@ -5,6 +5,7 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "AssetManager.h"
+#include <SDL2/SDL_ttf.h>
 
 
 
@@ -26,7 +27,7 @@ Animation aniPlayer[] = {
 	Animation(HURT_PLAYER_FRAMES, SPEED, HURT_PLAYER_WIDTH, HURT_PLAYER_HEIGHT), 
 	Animation(ATTACK_PLAYER_FRAMES, ATTACK_SPEED, ATTACK_PLAYER_WIDTH, ATTACK_PLAYER_HEIGHT),
 	Animation(DEAD_PLAYER_FRAMES, ATTACK_SPEED, DEAD_PLAYER_WIDTH, DEAD_PLAYER_HEIGHT),
-	Animation(SLIDE_PLAYER_FRAMES, SPEED, SLIDE_PLAYER_WIDTH, SLIDE_PLAYER_HEIGHT)
+	Animation(SLIDE_PLAYER_FRAMES, SLIDE_PLAYER_SPEED, SLIDE_PLAYER_WIDTH, SLIDE_PLAYER_HEIGHT)
 };
 int sizeaniPlayer = 6;
 
@@ -61,6 +62,7 @@ bool Game::isRunning = false;
 
 auto& player(manager.addEntity());
 auto& enemy1(manager.addEntity());
+auto& label(manager.addEntity());
 
 
 
@@ -100,6 +102,16 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 		isRunning = true;
 	}
+
+
+	if (TTF_Init() == -1)
+	{
+		std::cout << "Error : SDL_TTF" << std::endl;
+	}
+
+	assets->AddFont("arial", "assets/arial.ttf", 16);
+
+
 	assets->AddVector("terrain");
 	//assets->AddTexture("terrain", "assets/terrain_ss.png");
 	assets->AddTexture("terrain", "assets/tilemap_packed.png");
@@ -148,6 +160,9 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<ColliderComponent>("player");
 	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH);
 	player.addGroup(groupPlayers);
+
+	SDL_Color white = { 255, 255, 255, 255 };
+	label.addComponent<FontLabel>(10, 10, "Test String", "arial", white);
 
 	/*enemy1.addComponent<TransformComponent>(600, 640, IDLE_PLAYER_HEIGHT, IDLE_PLAYER_WIDTH, 1);
 	enemy1.addComponent<SpriteComponent>("enemy1", aniEnemy1, sizeaniEnemy1);
@@ -210,7 +225,10 @@ void Game::update()
 
 	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
-	
+	double dlTPlayer = deltaTime(player.getComponent<KeyboardController>().periodTime);
+	player.getComponent<KeyboardController>().hurtedTimer += dlTPlayer;
+	player.getComponent<KeyboardController>().slideTimer += dlTPlayer;
+	//std::cout << "slitetimer: " << player.getComponent<KeyboardController>().slideTimer << std::endl;
 
 	manager.refresh();
 	manager.update();
@@ -231,10 +249,27 @@ void Game::update()
 		SDL_Rect eCol = e->getComponent<ColliderComponent>().collider;
 		//std::cout << e->getComponent<ColliderComponent>().tag << std::endl;
 		std::string s = e->getComponent<ColliderComponent>().tag;
-		std::cout << s << " timer: " << e->getComponent<Enemy1>().timer << std::endl;
+		//std::cout << s << " timer: " << e->getComponent<Enemy1>().timer << std::endl;
+		double dlT = deltaTime(e->getComponent<Enemy1>().periodTime);
+		e->getComponent<Enemy1>().hurtedTimer += dlT;
+			e->getComponent<Enemy1>().timer += dlT;
+		//std::cout << e->getComponent<Enemy1>().hurtedTimer << std::endl;
+		//std::cout << "index: " << e->getComponent<SpriteComponent>().index << std::endl;
+		if (e->getComponent<Enemy1>().hurtedTimer < 2)
+		{
+			e->getComponent<Enemy1>().getHurt();
+		}
+		else
+		{
 		if (s == "enemy1")
 		{
-			e->getComponent<Enemy1>().timer += deltaTime(e->getComponent<Enemy1>().periodTime);
+			e->getComponent<SpriteComponent>().index = 0;
+			e->getComponent<SpriteComponent>().Play(s);
+			if (e->getComponent<Enemy1>().checkHurted)
+			{
+			e->getComponent<TransformComponent>().velocity.x = -1;
+			e->getComponent<Enemy1>().checkHurted = 0;
+			}
 			if (player.getComponent<SpriteComponent>().dead == 0)
 			{
 				if (e->getComponent<Enemy1>().timer > 2)
@@ -249,42 +284,30 @@ void Game::update()
 			if (player.getComponent<SpriteComponent>().dead == 0)
 			{
 				//std::cout << "timer2: " << timer2 << std::endl;
-				e->getComponent<Enemy1>().attackPlayer(eCol, playerCol, e->getComponent<Enemy1>().attacked);
-				if (e->getComponent<Enemy1>().timer > 5)
-				{
-					e->getComponent<Enemy1>().attacked = 0;
-				if (e->getComponent<SpriteComponent>().index == 3 &&
-					e->getComponent<Enemy1>().hit == 1
-					)
+				e->getComponent<Enemy1>().attackPlayer(eCol, playerCol);
+				//std::cout << "hit: " << e->getComponent<Enemy1>().hit << "  index: " << e->getComponent<SpriteComponent>().index << std::endl;
+				if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked && player.getComponent<SpriteComponent>().index != 5)
 				{
 					std::cout << "dam trung" << std::endl;
-					//player.getComponent<StatusBar>().health -= 20;
-					e->getComponent<Enemy1>().hit = 0;
-					std::cout << "playerHealth: " << player.getComponent<StatusBar>().health << std::endl;
 					
-					e->getComponent<Enemy1>().check = 1;
+					//player.getComponent<StatusBar>().health -= 20;
+					player.getComponent<KeyboardController>().hurtedTimer = 0;
+					e->getComponent<Enemy1>().hit = 0;
+					//std::cout << "playerHealth: " << player.getComponent<StatusBar>().health << std::endl;
+					
+					//e->getComponent<Enemy1>().check = 1;
 					e->getComponent<Enemy1>().timer = 0;
 					//std::cout << "health: " << player.getComponent<StatusBar>().health << std::endl;
 					//std::cout << "check timer2: " << timer2 << std::endl;
 				}
-				}
 				else
 				{
 					e->getComponent<Enemy1>().timer += deltaTime(e->getComponent<Enemy1>().periodTime);
-					//std::cout << "timer2: " << timer2 << std::endl;
-					if (e->getComponent<Enemy1>().check)
-					{
-						e->getComponent<Enemy1>().attacked = 1;
-						//check = 0;
-
-					}
-					else
-					{
-						e->getComponent<Enemy1>().attacked = 0;
-					}
-					//std::cout << "attaked: " << attacked << std::endl;
+					
 				}
 			}
+		}
+
 		}
 		/*if (e == *(enemies.end() - 1) && e->getComponent<Enemy1>().timer > 2)
 			{
@@ -296,9 +319,9 @@ void Game::update()
 			if ((player.getComponent<SpriteComponent>().index == 3) &&
 				player.getComponent<KeyboardController>().hit == 1)
 			{
-				e->getComponent<SpriteComponent>().index = 2;
-
-				e->getComponent<StatusBar>().health -= 50;
+				e->getComponent<Enemy1>().hurtedTimer = 0;
+				e->getComponent<StatusBar>().health -= 10;
+				e->getComponent<Enemy1>().checkHurted = 1;
 				player.getComponent<KeyboardController>().hit = 0;
 				//std::cout << e->getComponent<ColliderComponent>().tag << "Heath: " << e->getComponent<StatusBar>().health << std::endl;
 			}
@@ -318,12 +341,13 @@ void Game::update()
 		auto& p = projectiles[i];
 		if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
 		{
-			if (player.getComponent<SpriteComponent>().index != 2)
+			if (player.getComponent<SpriteComponent>().index != 5)
 			{
 			player.getComponent<StatusBar>().getDamage(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider);
+			player.getComponent<KeyboardController>().hurtedTimer = 0;
+			p->destroy();
 			}
 			//std::cout << "health: " << player.getComponent<StatusBar>().health << std::endl;
-			p->destroy();
 		}
 	}
 			if (player.getComponent<StatusBar>().health <= 0)
@@ -378,6 +402,7 @@ void Game::render()
 	{
 		p->draw();
 	}
+	label.draw();
 
 	SDL_RenderPresent(renderer);
 }

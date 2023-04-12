@@ -1,5 +1,5 @@
 #pragma once
-#include "ECS.h"
+#include <SDL2/SDL.h>
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
 #include "KeyboardController.h"
@@ -8,5 +8,5 @@
 #include "ProjectileComponent.h"
 #include "Enemy1.h"
 #include "StatusComponent.h"
-
+#include "FontLabel.h"
 
