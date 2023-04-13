@@ -5,6 +5,7 @@
 #include <vector>
 #include "Define.h"
 #include "AssetManager.h"
+#include "FontLabel.h"
 
 class Menu
 {
@@ -22,7 +23,6 @@ public:
 
 	static bool isRunning;
 	static SDL_Event event;
-	static AssetManager* assetsMeunu;
 	SDL_Texture* backgroundText;
 
 private:

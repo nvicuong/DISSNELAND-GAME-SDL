@@ -3,27 +3,39 @@
 #include "TextureManager.h"
 #include "Components.h"
 #include <sstream>
-Manager managerMenu;
-AssetManager* assetsMenu = new AssetManager(&managerMenu);
+
 
 SDL_Event Menu::event;
 bool Menu::isRunning = 1;
-auto& start(managerMenu.addEntity());
-auto& tutorial(managerMenu.addEntity());
-auto& setting(managerMenu.addEntity());
+TTF_Font* fontMenu = NULL;
+
+FontLabel start(30, 30, "start");
+FontLabel tutorial(60, 60, "tutorial");
+FontLabel setting(90, 90, "setting");
 void Menu::init()
 {
-	/*assetsMeunu->AddVector("menu");
-	assetsMeunu->AddTexture("menu", "assets/Menu.png");*/
+	// backgroundText = TextureManager::LoadTexture("assets/menu.png");
+	if (TTF_Init() == -1)
+	{
+		std::cout << "Error : SDL_TTF" << std::endl;
+	}
+	fontMenu = TTF_OpenFont("assets/arial.ttf", 30);
 
-	backgroundText = TextureManager::LoadTexture("assets/menu.png");
+	start.SetlabelText(fontMenu);
+	start.setColor(FontLabel::BLACK_TEXT);
 
-	assetsMenu->AddFont("arial", "assets/arial.ttf", 32);
-	SDL_Color WHITE = {255, 255, 255, 255};
-	start.addComponent<FontLabel>(20, 20, "START", "arial", WHITE);
-	tutorial.addComponent<FontLabel>(30, 30, "TUTORIAL", "arial", WHITE);
-	setting.addComponent<FontLabel>(40, 40, "SETTING", "arial",  WHITE);
-	SDL_RenderCopy(Game::renderer, backgroundText, nullptr, nullptr);
+	tutorial.SetlabelText(fontMenu);
+	tutorial.setColor(FontLabel::WHITE_TEXT);
+
+	setting.SetlabelText(fontMenu);
+	setting.setColor(FontLabel::WHITE_TEXT);
+	// assetsMenu->AddFont("arial", "assets/arial.ttf", 32);
+	// SDL_Color WHITE = {255, 255, 255, 255};
+	// start.addComponent<FontLabel>(20, 20, "START", "arial", WHITE);
+	// tutorial.addComponent<FontLabel>(30, 30, "TUTORIAL", "arial", WHITE);
+	// setting.addComponent<FontLabel>(40, 40, "SETTING", "arial",  WHITE);
+	// SDL_RenderCopy(Game::renderer, backgroundText, nullptr, nullptr);
+	
 }
 
 Menu::Menu()
@@ -40,13 +52,17 @@ bool Menu::handleEvents()
 switch (event.type)
 {
 	case SDL_MOUSEMOTION:
-		ss.str(""); // reset ss for each label
+		// start.getComponent<FontLabel>().destroy();
+		ss.str("");
 		ss << "mouse position: " << event.motion.x << " , " << event.motion.y;
-		start.getComponent<FontLabel>().SetlabelText(ss.str(), "arial");
+		// start.getComponent<FontLabel>().SetlabelText(ss.str(), "arial");
+		start.destroy();
+		start.SetText(ss.str());
+		start.SetlabelText(fontMenu);
 		break;
 	case SDL_MOUSEBUTTONDOWN:
 		// reset ss for each label
-		ss.str("");
+		// ss.str("");
 		break;
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_f)
@@ -55,7 +71,7 @@ switch (event.type)
 		}
 		break;
 	case SDL_QUIT:
-		isRunning = false;
+		Game::isRunning = false;
 		break;
 	default:
 		break;
@@ -66,7 +82,7 @@ switch (event.type)
 void Menu::render()
 {
 	SDL_RenderClear(Game::renderer);
-	SDL_RenderCopy(Game::renderer, backgroundText, nullptr, nullptr);
+	// SDL_RenderCopy(Game::renderer, backgroundText, nullptr, nullptr);
 	start.draw();
 	tutorial.draw();
 	setting.draw();

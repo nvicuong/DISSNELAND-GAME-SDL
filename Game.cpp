@@ -5,7 +5,7 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "AssetManager.h"
-#include <SDL2/SDL_ttf.h>
+#include "FontLabel.h"
 #include <sstream>
 
 
@@ -15,6 +15,8 @@ Map* map;
 Manager manager;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
+TTF_Font* font = NULL;
+
 
 SDL_Rect Game::camera = { 0, 0, MAX_WIDTH_SCREEN, MAX_HEIGHT_SCREEN };
 
@@ -62,8 +64,11 @@ int sizeaniEnemy2 = 5;
 bool Game::isRunning = false;
 
 auto& player(manager.addEntity());
-auto& enemy1(manager.addEntity());
-auto& label(manager.addEntity());
+// auto& enemy1(manager.addEntity());
+// auto& label(manager.addEntity());
+
+FontLabel timeGame(30, 30, "position");
+
 
 
 
@@ -109,8 +114,11 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	{
 		std::cout << "Error : SDL_TTF" << std::endl;
 	}
-
-	assets->AddFont("arial", "assets/arial.ttf", 16);
+	font = TTF_OpenFont("assets/arial.ttf", 16);
+	// assets->AddFont("arial", "assets/arial.ttf", 16);
+	// timeGame.setColor(1);
+	timeGame.SetlabelText(font);
+	timeGame.setColor(FontLabel::WHITE_TEXT);
 
 
 	assets->AddVector("terrain");
@@ -162,10 +170,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH);
 	player.addGroup(groupPlayers);
 
-	SDL_Color RED = {255, 0, 0, 255};
-	SDL_Color BLACK = {0, 0, 0, 255};
-	SDL_Color WHITE = {255, 255, 255, 255};
-	label.addComponent<FontLabel>(10, 10, "Test String", "arial", WHITE);
+	// SDL_Color RED = {255, 0, 0, 255};
+	// SDL_Color BLACK = {0, 0, 0, 255};
+	// SDL_Color WHITE = {255, 255, 255, 255};
+	// label.addComponent<FontLabel>(10, 10, "Test String", "arial", WHITE);
 
 	/*enemy1.addComponent<TransformComponent>(600, 640, IDLE_PLAYER_HEIGHT, IDLE_PLAYER_WIDTH, 1);
 	enemy1.addComponent<SpriteComponent>("enemy1", aniEnemy1, sizeaniEnemy1);
@@ -231,12 +239,16 @@ void Game::update()
 	double dlTPlayer = deltaTime(player.getComponent<KeyboardController>().periodTime);
 	player.getComponent<KeyboardController>().hurtedTimer += dlTPlayer;
 	player.getComponent<KeyboardController>().slideTimer += dlTPlayer;
-	//std::cout << "slitetimer: " << player.getComponent<KeyboardController>().slideTimer << std::endl;
 
+
+	timeGame.destroy();
+	timeGame.SetlabelText(font);
 	std::stringstream ss;
 	ss << "Player position: " << playerPos;
 
-	label.getComponent<FontLabel>().SetlabelText(ss.str(), "arial");
+	// label.getComponent<FontLabel>().SetlabelText("sdll", "arial");
+	timeGame.SetText(ss.str());
+	// timeGame.GetColor();
 
 	manager.refresh();
 	manager.update();
@@ -296,7 +308,7 @@ void Game::update()
 				//std::cout << "hit: " << e->getComponent<Enemy1>().hit << "  index: " << e->getComponent<SpriteComponent>().index << std::endl;
 				if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked && player.getComponent<SpriteComponent>().index != 5)
 				{
-					std::cout << "dam trung" << std::endl;
+					// std::cout << "dam trung" << std::endl;
 					
 					//player.getComponent<StatusBar>().health -= 20;
 					player.getComponent<KeyboardController>().hurtedTimer = 0;
@@ -410,7 +422,7 @@ void Game::render()
 	{
 		p->draw();
 	}
-	label.draw();
+	timeGame.draw();
 
 	SDL_RenderPresent(renderer);
 }

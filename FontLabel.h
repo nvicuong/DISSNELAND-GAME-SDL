@@ -12,36 +12,40 @@
 class FontLabel : public Component
 {
 public:
-	FontLabel(int xpos, int ypos, std::string text, std::string font, SDL_Color& colour) :
-		labelText(text), labelFont(font), textColour(colour)
-	{
-		position.x = xpos;
-		position.y = ypos;
-
-		SetlabelText(labelText, labelFont);
-	}
+	FontLabel(int xpos, int ypos, std::string text);
 	~FontLabel()
 	{}
 
-	void SetlabelText(std::string text, std::string font)
+	enum TextColor
 	{
-		SDL_Surface* surf = TTF_RenderText_Blended(Game::assets->GetFont(font), text.c_str(), textColour);
-		labelTexture = SDL_CreateTextureFromSurface(Game::renderer, surf);
-		SDL_FreeSurface(surf);
+		RED_TEXT = 0,
+		WHITE_TEXT = 1,
+		BLACK_TEXT = 2
+	};
 
-		SDL_QueryTexture(labelTexture, nullptr, nullptr, &position.w, &position.h);
-
-	}
+	bool SetlabelText(TTF_Font* font);
 	void draw() override
 	{
-	SD:SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);
+	SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);
 	}
+	void destroy()
+	{
+		SDL_DestroyTexture(labelTexture);
+		labelTexture = NULL;
+	}
+	
+	void SetColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha);
+	void setColor(int type);
+
+	void SetText(const std::string& text) { labelText = text; }
+	std::string GetText() const {return labelText; }
+
 
 private:
 	SDL_Rect position;
 	std::string labelText;
-	std::string labelFont;
-	SDL_Color textColour;
 	SDL_Texture* labelTexture;
+	SDL_Color textColor;
+	// std::string labelFont;
 
 };

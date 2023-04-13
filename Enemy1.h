@@ -1,5 +1,4 @@
 #pragma once
-#include "ECS.h"
 #include "Components.h"
 #include "Vector2D.h"
 #include "Collision.h"

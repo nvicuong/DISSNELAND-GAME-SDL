@@ -33,6 +33,9 @@ int main(int argc, char *argv[])
 		game->update();
 		game->render();
 		}
+		// game->handleEvents();
+		// game->update();
+		// game->render();
 
 		frameTime = SDL_GetTicks() - frameStart;
 

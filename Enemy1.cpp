@@ -42,8 +42,8 @@ bool Enemy1::completedAttack()
     //std::cout << sprite->index << std::endl;
     if ((sprite->currentFrame >= sprite->frames - 1) && sprite->index == 3)
     {
-    std::cout << "currenFrame: " << sprite->currentFrame << std::endl;
-    std::cout << "frames: " << sprite->frames << std::endl;
+    // std::cout << "currenFrame: " << sprite->currentFrame << std::endl;
+    // std::cout << "frames: " << sprite->frames << std::endl;
         //std::cout << "..";
         attacked = 1;
         return true;
