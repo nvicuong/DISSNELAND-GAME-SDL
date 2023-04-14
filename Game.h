@@ -19,6 +19,9 @@ public:
 	static bool isRunningMenu;
 	static int openMenu;
 	static bool resetGame;
+	static int enemyRemnants;
+	static double periodTimeGame;
+	SDL_Texture* barText;
 	Game();
 	~Game();
 

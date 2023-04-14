@@ -12,6 +12,7 @@ TTF_Font* fontTitle = NULL;
 
 std::vector<FontLabel> managerMenu;
 std::vector<FontLabel> managerGameOver;
+std::vector<FontLabel> managerPause;
 
 void Menu::init()
 {
@@ -67,6 +68,23 @@ void Menu::init()
     managerGameOver.push_back(returntomenu);
     managerGameOver.push_back(quitOver);
 
+    FontLabel pause(430, 150, "PAUSE");
+    FontLabel continueGame(425, 250, "CONTINUE");
+
+    pause.setColor(FontLabel::PINK_TEXT);
+    pause.SetlabelText(fontTitle);
+
+    continueGame.setColor(FontLabel::WHITE_TEXT);
+    continueGame.SetlabelText(fontMenu);
+
+    managerPause.push_back(pause);
+    managerPause.push_back(continueGame);
+    managerPause.push_back(returntomenu);
+    managerPause.push_back(quitOver);
+
+    
+
+
 }
 
 Menu::Menu()
@@ -82,7 +100,7 @@ bool Menu::handleEvents()
     switch (event.type)
     {
     case SDL_MOUSEMOTION:
-        if (Game::openMenu)
+        if (Game::openMenu == 1)
         {
             for (int i = 1; i < managerMenu.size(); i++)
             {
@@ -98,7 +116,7 @@ bool Menu::handleEvents()
                 managerMenu[i].SetlabelText(fontMenu);
             }
         }
-        else
+        else if (Game::openMenu == 0)
         {
             for (int i = 1; i < managerGameOver.size(); i++)
             {
@@ -114,13 +132,30 @@ bool Menu::handleEvents()
                 managerGameOver[i].SetlabelText(fontMenu);
             }
         }
+        else
+        {
+            for (int i = 1; i < managerPause.size(); i++)
+            {
+                managerPause[i].destroy();
+                if (managerPause[i].checkMotion(event.motion.x, event.motion.y))
+                {
+                    managerPause[i].setColor(FontLabel::RED_TEXT);
+                }
+                else
+                {
+                    managerPause[i].setColor(FontLabel::WHITE_TEXT);
+                }
+                managerPause[i].SetlabelText(fontMenu);
+            }
+        }
         break;
     case SDL_MOUSEBUTTONDOWN:
 
-        if (Game::openMenu)
+        if (Game::openMenu == 1)
         {
             if (managerMenu[1].checkMotion(event.motion.x, event.motion.y))
             {
+                Game::periodTimeGame = SDL_GetTicks()/1000;
                 Game::resetGame = 1;
                 Game::isRunningMenu = 0;
             }
@@ -129,21 +164,39 @@ bool Menu::handleEvents()
                 Game::isRunning = 0;
             }
         }
-        else
+        else if (Game::openMenu == 0)
         {
             if (managerGameOver[1].checkMotion(event.motion.x, event.motion.y))
             {
-                std::cout << "kk";
                 Game::openMenu = 1;
             }
             if (managerGameOver[2].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::isRunning = 0;
             }
-
+        }
+        else
+        {
+            if (managerPause[1].checkMotion(event.motion.x, event.motion.y))
+            {
+                Game::periodTimeGame = SDL_GetTicks()/1000;
+                Game::isRunningMenu = 0;
+            }
+            if (managerPause[2].checkMotion(event.motion.x, event.motion.y))
+            {
+                Game::openMenu = 1;
+            }
+            if (managerPause[3].checkMotion(event.motion.x, event.motion.y))
+            {
+                Game::isRunning = 0;
+            }
         }
         break;
     case SDL_KEYDOWN:
+        if (event.key.keysym.sym == SDLK_ESCAPE)
+        {
+            Game::isRunning = false;
+        }
         break;
     case SDL_QUIT:
         Game::isRunning = false;
@@ -158,16 +211,23 @@ void Menu::render()
 {
     SDL_RenderClear(Game::renderer);
 	
-    if (Game::openMenu)
+    if (Game::openMenu == 1)
     {
         for (auto i : managerMenu)
         {
             i.draw();
         }
     }
-    else
+    else if (Game::openMenu == 0)
     {
         for (auto i : managerGameOver)
+        {
+            i.draw();
+        }
+    }
+    else
+    {
+        for (auto i : managerPause)
         {
             i.draw();
         }

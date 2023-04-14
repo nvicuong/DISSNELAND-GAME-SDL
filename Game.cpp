@@ -20,8 +20,10 @@ TTF_Font* font = NULL;
 bool Game::isRunningMenu = 1;
 int Game::openMenu = 1;
 bool Game::resetGame = 0;
+int Game::enemyRemnants = 0;
 
 
+SDL_Rect destBarText = {0, 0, 1000, 100};
 SDL_Rect Game::camera = { 0, 0, MAX_WIDTH_SCREEN, MAX_HEIGHT_SCREEN };
 
 AssetManager* Game::assets = new AssetManager(&manager);
@@ -71,7 +73,8 @@ auto& player(manager.addEntity());
 // auto& enemy1(manager.addEntity());
 // auto& label(manager.addEntity());
 
-FontLabel timeGame(30, 30, "position");
+FontLabel timeGame(MAX_WIDTH_SCREEN - 100, 20, "TIME");
+FontLabel enemyRemain(MAX_WIDTH_SCREEN - 300, 20, "REMAINING MONSTERS");
 
 
 
@@ -94,6 +97,8 @@ Game::~Game()
 
 void Game::init(const char* title, int width, int height, bool fullscreen)
 {
+
+
 	int flags = 0;
 
 	if (fullscreen)
@@ -123,6 +128,9 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	// timeGame.setColor(1);
 	timeGame.SetlabelText(font);
 	timeGame.setColor(FontLabel::WHITE_TEXT);
+
+	enemyRemain.SetlabelText(font);
+	enemyRemain.setColor(FontLabel::WHITE_TEXT);
 
 
 	assets->AddVector("terrain");
@@ -171,7 +179,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<SpriteComponent>("player", aniPlayer, sizeaniPlayer);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
-	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH);
+	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH, "player");
 	player.addGroup(groupPlayers);
 
 	assets->CreateEnemy1(Vector2D(600, 640), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
@@ -181,6 +189,8 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	assets->CreateEnemy2(Vector2D(600,640), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
 	assets->CreateEnemy2(Vector2D(900, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
 	assets->CreateEnemy2(Vector2D(800, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+
+	enemyRemnants = 5;
 
 	//assets->CreateProJectile(Vector2D(600, 600), Vector2D(2, 0), OBJECT_WIDTH, OBJECT_HEIGHT, 200, 2, "projectile", 0, aniProject, sizeaniProject);
 	/*assets->CreateProJectile(Vector2D(600, 620), Vector2D(2, 0), OBJECT_WIDTH, OBJECT_HEIGHT, 200, 2, "projectile", 0, aniProject, sizeaniProject);
@@ -207,24 +217,32 @@ void Game::handleEvents()
 
 	switch (event.type)
 	{
+	case SDL_KEYDOWN:
+	if (event.key.keysym.sym == SDLK_p)
+        {
+            isRunningMenu = 1;
+			openMenu = 2;
+        }
+        break;
 	case SDL_QUIT:
-		isRunning = false;
-		break;
+	isRunning = 0;
+	break;
+	// std::cout << "quit";
+	// 	isRunningMenu = 1;
+	// 	openMenu = 2;
 	default:
 		break;
 	}
 }
 
 
-//double periodTime1 = SDL_GetTicks()/1000;
+double Game::periodTimeGame = SDL_GetTicks()/1000;
 //double periodTime2 = SDL_GetTicks()/1000;
-//double timer1 = 0;
-//double timer2 = 0;
-//bool attacked = 0;
-//bool check = 0;
+double countTimeGame = 0;
 void Game::update()
 {
 
+	countTimeGame += deltaTime(periodTimeGame);
 	
 
 	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
@@ -236,11 +254,15 @@ void Game::update()
 
 	timeGame.destroy();
 	timeGame.SetlabelText(font);
-	std::stringstream ss;
-	ss << "Player position: " << playerPos;
 
+	enemyRemain.destroy();
+	enemyRemain.SetlabelText(font);
+	std::stringstream ss1, ss2;
+	ss1 << "TIME: " << static_cast<int>(countTimeGame);
+	ss2 << "MONSTERS: " << enemyRemnants;
 	// label.getComponent<FontLabel>().SetlabelText("sdll", "arial");
-	timeGame.SetText(ss.str());
+	timeGame.SetText(ss1.str());
+	enemyRemain.SetText(ss2.str());
 	// timeGame.GetColor();
 
 	manager.refresh();
@@ -303,7 +325,7 @@ void Game::update()
 				{
 					// std::cout << "dam trung" << std::endl;
 					
-					player.getComponent<StatusBar>().health -= 100;
+					player.getComponent<StatusBar>().health -= 10;
 					player.getComponent<KeyboardController>().hurtedTimer = 0;
 					e->getComponent<Enemy1>().hit = 0;
 					//std::cout << "playerHealth: " << player.getComponent<StatusBar>().health << std::endl;
@@ -341,6 +363,7 @@ void Game::update()
 			if (e->getComponent<StatusBar>().health <= 0)
 			{
 				e->destroy();
+				enemyRemnants -= 1;
 			}
 		}
 		
@@ -370,6 +393,7 @@ void Game::update()
 			}
 			if (player.getComponent<SpriteComponent>().dead)
 			{
+				countTimeGame = 0;
 				isRunningMenu = 1;
 				openMenu = 0;
 			}
@@ -396,6 +420,9 @@ void Game::update()
 void Game::render()
 {
 	SDL_RenderClear(renderer);
+
+	SDL_DestroyTexture(barText);
+	barText = NULL;
 	for (auto& t : tiles)
 	{
 		t->draw();
@@ -420,8 +447,11 @@ void Game::render()
 	{
 		p->draw();
 	}
+	barText = TextureManager::LoadTexture("assets/bar.png");
+	SDL_RenderCopy(renderer, barText, NULL, &destBarText);
+	player.getComponent<StatusBar>().draw();
 	timeGame.draw();
-
+	enemyRemain.draw();
 	SDL_RenderPresent(renderer);
 }
 
@@ -452,6 +482,9 @@ void Game::initObject()
 	player.getComponent<StatusBar>().health = 100;
 	player.getComponent<TransformComponent>().position = Vector2D(800, 500);
 	player.getComponent<SpriteComponent>().index = 0;
+	player.getComponent<SpriteComponent>().Play("player");
+
+	enemyRemnants = 5;
 
 	resetGame = 0;
 }
