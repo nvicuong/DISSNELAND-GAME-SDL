@@ -22,13 +22,17 @@ int main(int argc, char *argv[])
 	{
 		
 		frameStart = SDL_GetTicks();
-		if (menu->running())
+		if (Game::isRunningMenu)
 		{
 			menu->handleEvents();
 			menu->render();
 		}
 		else
 		{
+			if (Game::resetGame)
+			{
+				game->initObject();
+			}
 		game->handleEvents();
 		game->update();
 		game->render();

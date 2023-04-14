@@ -49,4 +49,25 @@ void FontLabel::setColor(int type)
         SDL_Color color = {0, 0, 0, 255};
         textColor = color;
     }
+    else if (type == ORANGE_TEXT)
+    {
+        SDL_Color color = {255, 127, 39, 255};
+        textColor = color;
+    }
+    else if (type == PINK_TEXT)
+    {
+        SDL_Color color = {234, 54, 128, 255};
+        textColor = color;
+    }
+}
+
+bool FontLabel::checkMotion(int x, int y)
+{
+    if (x >= position.x && x <= (position.x + position.w) &&
+        y >= position.y && y <= (position.y + position.h)
+    )
+    {
+        return true;
+    }
+    return false;
 }

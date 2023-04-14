@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "Define.h"
+// #include "Menu.h"
 
 
 
@@ -15,10 +16,14 @@ class AssetManager;
 class Game
 {
 public:
+	static bool isRunningMenu;
+	static int openMenu;
+	static bool resetGame;
 	Game();
 	~Game();
 
 	void init(const char* title, int width, int height, bool fullscreen);
+	void initObject();
 
 	void handleEvents();
 	void update();
@@ -44,6 +49,5 @@ public:
 
 private:
 	
-	int cnt = 0;
 	SDL_Window *window;
 };

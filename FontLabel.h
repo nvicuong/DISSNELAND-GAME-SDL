@@ -9,7 +9,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
 
-class FontLabel : public Component
+class FontLabel
 {
 public:
 	FontLabel(int xpos, int ypos, std::string text);
@@ -20,11 +20,13 @@ public:
 	{
 		RED_TEXT = 0,
 		WHITE_TEXT = 1,
-		BLACK_TEXT = 2
+		BLACK_TEXT = 2, 
+		ORANGE_TEXT = 3,
+		PINK_TEXT = 4
 	};
 
 	bool SetlabelText(TTF_Font* font);
-	void draw() override
+	void draw()
 	{
 	SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);
 	}
@@ -39,6 +41,8 @@ public:
 
 	void SetText(const std::string& text) { labelText = text; }
 	std::string GetText() const {return labelText; }
+
+	bool checkMotion(int x, int y);
 
 
 private:

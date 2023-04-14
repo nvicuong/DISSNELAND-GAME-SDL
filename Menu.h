@@ -17,11 +17,9 @@ public:
 	void init();
 	bool handleEvents();
 	void update();
-	bool running() { return isRunning; }
 	void render();
 	void clean();
 
-	static bool isRunning;
 	static SDL_Event event;
 	SDL_Texture* backgroundText;
 

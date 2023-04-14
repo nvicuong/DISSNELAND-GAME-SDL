@@ -17,6 +17,10 @@ SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
 TTF_Font* font = NULL;
 
+bool Game::isRunningMenu = 1;
+int Game::openMenu = 1;
+bool Game::resetGame = 0;
+
 
 SDL_Rect Game::camera = { 0, 0, MAX_WIDTH_SCREEN, MAX_HEIGHT_SCREEN };
 
@@ -103,7 +107,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		if (renderer)
 		{
-			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			SDL_SetRenderDrawColor(renderer, 255, 127, 39, 255);
 		}
 
 		isRunning = true;
@@ -169,17 +173,6 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<ColliderComponent>("player");
 	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH);
 	player.addGroup(groupPlayers);
-
-	// SDL_Color RED = {255, 0, 0, 255};
-	// SDL_Color BLACK = {0, 0, 0, 255};
-	// SDL_Color WHITE = {255, 255, 255, 255};
-	// label.addComponent<FontLabel>(10, 10, "Test String", "arial", WHITE);
-
-	/*enemy1.addComponent<TransformComponent>(600, 640, IDLE_PLAYER_HEIGHT, IDLE_PLAYER_WIDTH, 1);
-	enemy1.addComponent<SpriteComponent>("enemy1", aniEnemy1, sizeaniEnemy1);
-	enemy1.addComponent<Enemy1>(1);
-	enemy1.addComponent<ColliderComponent>("enemy1");
-	enemy1.addGroup(groupEnemy);*/
 
 	assets->CreateEnemy1(Vector2D(600, 640), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
 	assets->CreateEnemy1(Vector2D(800, 800), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
@@ -310,7 +303,7 @@ void Game::update()
 				{
 					// std::cout << "dam trung" << std::endl;
 					
-					//player.getComponent<StatusBar>().health -= 20;
+					player.getComponent<StatusBar>().health -= 100;
 					player.getComponent<KeyboardController>().hurtedTimer = 0;
 					e->getComponent<Enemy1>().hit = 0;
 					//std::cout << "playerHealth: " << player.getComponent<StatusBar>().health << std::endl;
@@ -375,6 +368,11 @@ void Game::update()
 				player.getComponent<SpriteComponent>().dead = 1;
 				player.getComponent<TransformComponent>().velocity = Vector2D(0, 0);
 			}
+			if (player.getComponent<SpriteComponent>().dead)
+			{
+				isRunningMenu = 1;
+				openMenu = 0;
+			}
 
 	camera.x = player.getComponent<TransformComponent>().position.x - MAX_WIDTH_SCREEN/2;
 	camera.y = player.getComponent<TransformComponent>().position.y - MAX_HEIGHT_SCREEN/2;
@@ -432,4 +430,28 @@ void Game::clean()
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
+}
+
+void Game::initObject()
+{
+
+	for (auto e : enemies)
+	{
+		e->destroy();
+	}
+
+	assets->CreateEnemy1(Vector2D(600, 640), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
+	assets->CreateEnemy1(Vector2D(800, 800), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
+
+
+	assets->CreateEnemy2(Vector2D(600,640), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	assets->CreateEnemy2(Vector2D(900, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	assets->CreateEnemy2(Vector2D(800, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+
+	player.getComponent<SpriteComponent>().dead = 0;
+	player.getComponent<StatusBar>().health = 100;
+	player.getComponent<TransformComponent>().position = Vector2D(800, 500);
+	player.getComponent<SpriteComponent>().index = 0;
+
+	resetGame = 0;
 }
