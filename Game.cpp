@@ -169,6 +169,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	map = new Map("terrain", 3, 16);
 
 	map->LoadMap("assets/tilemap.map", 50, 20);
+	
 	map->sizeWidthMap = 50 * map->scaledSize - MAX_WIDTH_SCREEN;
 	map->sizeHeightMap = 20 * map->scaledSize - MAX_HEIGHT_SCREEN;
 	camera.w = map->sizeWidthMap;
@@ -182,15 +183,15 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH, "player");
 	player.addGroup(groupPlayers);
 
-	assets->CreateEnemy1(Vector2D(600, 640), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
-	assets->CreateEnemy1(Vector2D(800, 800), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
+	// assets->CreateEnemy1(Vector2D(600, 640), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
+	// assets->CreateEnemy1(Vector2D(800, 800), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
 
 
-	assets->CreateEnemy2(Vector2D(600,640), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
-	assets->CreateEnemy2(Vector2D(900, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
-	assets->CreateEnemy2(Vector2D(800, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	// assets->CreateEnemy2(Vector2D(600,640), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	// assets->CreateEnemy2(Vector2D(900, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	// assets->CreateEnemy2(Vector2D(800, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
 
-	enemyRemnants = 5;
+	// enemyRemnants = 5;
 
 	//assets->CreateProJectile(Vector2D(600, 600), Vector2D(2, 0), OBJECT_WIDTH, OBJECT_HEIGHT, 200, 2, "projectile", 0, aniProject, sizeaniProject);
 	/*assets->CreateProJectile(Vector2D(600, 620), Vector2D(2, 0), OBJECT_WIDTH, OBJECT_HEIGHT, 200, 2, "projectile", 0, aniProject, sizeaniProject);
@@ -253,15 +254,17 @@ void Game::update()
 
 
 	timeGame.destroy();
-	timeGame.SetlabelText(font);
-
 	enemyRemain.destroy();
+
+	timeGame.SetlabelText(font);
 	enemyRemain.SetlabelText(font);
+
 	std::stringstream ss1, ss2;
 	ss1 << "TIME: " << static_cast<int>(countTimeGame);
-	ss2 << "MONSTERS: " << enemyRemnants;
+	
 	// label.getComponent<FontLabel>().SetlabelText("sdll", "arial");
 	timeGame.SetText(ss1.str());
+	ss2 << "MONSTER: " << enemyRemnants;
 	enemyRemain.SetText(ss2.str());
 	// timeGame.GetColor();
 
@@ -325,9 +328,10 @@ void Game::update()
 				{
 					// std::cout << "dam trung" << std::endl;
 					
-					player.getComponent<StatusBar>().health -= 10;
+					// player.getComponent<StatusBar>().health -= 10;
 					player.getComponent<KeyboardController>().hurtedTimer = 0;
 					e->getComponent<Enemy1>().hit = 0;
+					
 					//std::cout << "playerHealth: " << player.getComponent<StatusBar>().health << std::endl;
 					
 					//e->getComponent<Enemy1>().check = 1;
@@ -348,8 +352,11 @@ void Game::update()
 			{
 			e->getComponent<Enemy1>().timer = 0;
 			}*/
+		
 		if (Collision::AABB(playerCol, eCol))
 		{
+			e->getComponent<Enemy1>().xpos = 0;
+			e->getComponent<Enemy1>().ypos = 0;
 			//player.getComponent<TransformComponent>().position = playerPos;
 			if ((player.getComponent<SpriteComponent>().index == 3) &&
 				player.getComponent<KeyboardController>().hit == 1)
@@ -474,13 +481,13 @@ void Game::initObject()
 	assets->CreateEnemy1(Vector2D(800, 800), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
 
 
-	assets->CreateEnemy2(Vector2D(600,640), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
-	assets->CreateEnemy2(Vector2D(900, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
-	assets->CreateEnemy2(Vector2D(800, 800), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	assets->CreateEnemy2(Vector2D(14*48,7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	assets->CreateEnemy2(Vector2D(16*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	assets->CreateEnemy2(Vector2D(18*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
 
 	player.getComponent<SpriteComponent>().dead = 0;
 	player.getComponent<StatusBar>().health = 100;
-	player.getComponent<TransformComponent>().position = Vector2D(800, 500);
+	player.getComponent<TransformComponent>().position = Vector2D(17*48, 7*48);
 	player.getComponent<SpriteComponent>().index = 0;
 	player.getComponent<SpriteComponent>().Play("player");
 

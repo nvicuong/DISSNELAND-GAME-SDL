@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <bitset> 
 #include <array>
+#include "Map.h"
 
 class Component; 
 class Entity; 

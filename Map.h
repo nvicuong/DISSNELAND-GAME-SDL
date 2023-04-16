@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 #include <sstream>
-#include "AssetManager.h"
+
 
 class Map
 {
 public:
-
+	static int map1[20][50];
 	int sizeWidthMap;
 	int sizeHeightMap;
 	int scaledSize;

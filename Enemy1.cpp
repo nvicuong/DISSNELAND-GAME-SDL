@@ -1,4 +1,115 @@
 #include "Enemy1.h"
+#include <vector>
+#include <queue>
+#include <utility>
+
+
+
+int dx[] = {-1, 0, 1, 0};
+int dy[] = {0, 1, 0, -1};
+
+bool isValid(int x, int y, std::vector<std::vector<bool>>& visited) {
+    if (x < 0 || x >= 20 || y < 0 || y >= 50)
+        return false;
+    if (Map::map1[x][y] == 1 || visited[x][y])
+        return false;
+    return true;
+}
+
+void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited, std::vector<std::vector<int>>& dist, std::vector<std::pair<int, int>> path[20][50], std::vector<std::pair<int, int>> vec2D[20][50]) {
+    std::queue<std::pair<int, int>> q;
+
+    visited[sx][sy] = true;
+    dist[sx][sy] = 0;
+
+    std::pair<int, int> qPair(sx, sy);
+    q.push(qPair);
+
+    while (!q.empty()) {
+        std::pair<int, int> node = q.front();
+        q.pop();
+
+        int x = node.first;
+        int y = node.second;
+
+        if (x == ex && y == ey) {
+            return;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (isValid(nx, ny, visited)) {
+                visited[nx][ny] = true;
+                dist[nx][ny] = dist[x][y] + 1;
+                std::pair<int, int> r(nx, ny);
+                q.push(r);
+                path[nx][ny] = path[x][y];
+                vec2D[nx][ny] = vec2D[x][y];
+
+                std::pair<int, int> pathPair(nx, ny);
+                std::pair<int, int> vec2DPair(dy[i], dx[i]);
+
+                path[nx][ny].push_back(pathPair);
+                vec2D[nx][ny].push_back(vec2DPair);
+            }
+        }
+    }
+    for (auto p : vec2D[ex][ey]) {
+        std::cout << p.first << " " << p.second <<std::endl;
+    }
+    // std::cout << "sx: " << sx << " sy: " << sy << std::endl
+    //           << "ex: " << ex << " ey: " << ey << std::endl
+    //           << "-----------------" << std::endl;
+}
+
+bool Enemy1::huntPlayerVer2(const SDL_Rect& eneRect, const SDL_Rect& recP)
+{
+    
+    if (abs(eneRect.x - xpos) >= 48 || abs(eneRect.y - ypos) >= 48)
+    {
+    std::vector<std::vector<bool>> visited(20, std::vector<bool>(50));
+    std::vector<std::vector<int>> dist(20, std::vector<int>(50));
+
+    std::vector<std::pair<int, int>> path[20][50];
+    std::vector<std::pair<int, int>> vec2D[20][50];
+
+    int sx = eneRect.y / 48;
+    int sy = eneRect.x / 48;
+
+    int ex = (recP.y + (recP.h/2)) / 48;
+    int ey = (recP.x + (recP.w/2)) / 48;
+
+    bfs(sx, sy, ex, ey, visited, dist, path, vec2D);
+    
+    if (!vec2D[ex][ey].empty())
+    {
+        int x = vec2D[ex][ey].front().first;
+        int y = vec2D[ex][ey].front().second;
+        // std::cout << "no empty" << std::endl;
+        Vector2D vel(2*x, 2*y);
+        transform->velocity = vel;
+        xpos = eneRect.x;
+        ypos = eneRect.y;
+        
+        sprite->index = 1;
+        sprite->Play(tag);
+        return true;
+    }
+    else
+    {
+        // std::cout << "empty" << std::endl;
+        Vector2D vel(0, 0);
+        transform->velocity = vel;
+        return false;
+    }
+    }
+    return false;
+
+
+}
+
 
 std::vector<float> desX = { -1, -0.95, -0.9, -0.85, -0.8, -0.75, -0.7, -0.65, -0.6, -0.55, -0.5, -0.45, -0.4, -0.35, -0.3, -0.25, -0.2, -0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1 };
 std::vector<float> desY = { -1, -0.95, -0.9, -0.85, -0.8, -0.75, -0.7, -0.65, -0.6, -0.55, -0.5, -0.45, -0.4, -0.35, -0.3, -0.25, -0.2, -0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1 };
@@ -104,28 +215,15 @@ void Enemy1::fireGun(const SDL_Rect& eneRect, const SDL_Rect& recP, AssetManager
     }
 }
 
-bool Enemy1::huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
-{
-    if (Collision::findAABB(eneRect, recP))
-    {
-        Vector2D getV = Enemy1::getVel(eneRect, recP);
-        transform->velocity = getV;
-        return true;
-    }
-    else
-    {
-        Vector2D getV(0, 0);
-        transform->velocity = getV;
-    }
-    return false;
-}
-
 void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
 {
     if (timer < 5)
     {
         //std::cout << sprite->currentFrame << std::endl;
+        if (eneRect.x % 48 == 0 && eneRect.y % 48 == 0)
+        {
         transform->velocity = Vector2D(0, 0);
+        }
         bool a;
         a = completedAttack();
         if (Collision::AABB(eneRect, recP) && a)
@@ -146,16 +244,18 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
     }
     else
     {
+    if (transform->velocity.x != 0 || transform->velocity.y != 0)
+    {
+        sprite->index = 1;
+    }
+    else
+    {
+        sprite->index = 0;
+    }
         attacked = 0;
         //std::cout << "xx";
-        if (Enemy1::huntPlayer(eneRect, recP))
-        {
-            sprite->index = 1;
-        }
-        else
-        {
-            sprite->index = 0;
-        }
+        Enemy1::huntPlayerVer2(eneRect, recP);
+        
         if (transform->velocity.x > 0)
         {
             sprite->spriteFlip = SDL_FLIP_NONE;

@@ -5,7 +5,10 @@
 #include "Components.h"
 
 
+
+
 extern Manager manager;
+int Map::map1[20][50];
 
 Map::Map(std::string tID, int ms, int ts) : texID(tID), mapScale(ms), tileSize(ts)
 {
@@ -48,15 +51,20 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 		for (int x = 0; x < sizeX; x++)
 		{
 			mapFile.get(c);
-			//std::cout << c << std::endl;
 			if (c == '1')
 			{
+				map1[y][x] = 1;
 				auto& tcol(manager.addEntity());
 				tcol.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize);
 				tcol.addGroup(Game::groupColliders);
 			}
+			else
+			{
+				map1[y][x] = 0;
+			}
 			mapFile.ignore();
 		}
+		// std::cout << std::endl;
 	}
 
 	mapFile.close();

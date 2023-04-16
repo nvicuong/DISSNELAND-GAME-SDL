@@ -10,6 +10,8 @@
 class Enemy1 : public Component
 {
 public:
+	int xpos;
+	int ypos;
 	double periodTime = 0;
 	double timer = 0;
 	bool attacked;
@@ -26,6 +28,8 @@ public:
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		sprite = &entity->getComponent<SpriteComponent>();
+		xpos = 0;
+		ypos = 0;
 		sprite->index = 0;
 		periodTime = SDL_GetTicks()/1000;
 		timer = 5;
@@ -33,7 +37,7 @@ public:
 		hit = 0;
 		checkHurted = 0;
 		attacked = 0;
-		transform->velocity.x = -1;
+		transform->velocity.x = 0;
 		transform->velocity.y = 0;
 		transform->speed = 1;
 		sprite->Play(tag);
@@ -59,6 +63,7 @@ public:
 	bool huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void getHurt();
+	bool huntPlayerVer2(const SDL_Rect& eneRect, const SDL_Rect& recP);
 
 private:
 	TransformComponent* transform;
