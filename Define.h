@@ -11,6 +11,8 @@
 #define MAX_WIDTH_SCREEN 1000
 #define MAX_HEIGHT_SCREEN 700
 
+#define SMOOTHING_FACTOR 0.05
+
 #define SPEED 70
 #define ATTACK_SPEED 50
 

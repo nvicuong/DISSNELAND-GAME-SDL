@@ -328,7 +328,7 @@ void Game::update()
 				{
 					// std::cout << "dam trung" << std::endl;
 					
-					// player.getComponent<StatusBar>().health -= 10;
+					player.getComponent<StatusBar>().health -= 10;
 					player.getComponent<KeyboardController>().hurtedTimer = 0;
 					e->getComponent<Enemy1>().hit = 0;
 					
@@ -405,8 +405,14 @@ void Game::update()
 				openMenu = 0;
 			}
 
-	camera.x = player.getComponent<TransformComponent>().position.x - MAX_WIDTH_SCREEN/2;
-	camera.y = player.getComponent<TransformComponent>().position.y - MAX_HEIGHT_SCREEN/2;
+	float newXposCam = player.getComponent<TransformComponent>().position.x - MAX_WIDTH_SCREEN/2;
+	float newYposCam = player.getComponent<TransformComponent>().position.y - MAX_HEIGHT_SCREEN/2;
+
+	camera.x = camera.x + (newXposCam - camera.x) * SMOOTHING_FACTOR;
+	camera.y = camera.y + (newYposCam - camera.y) * SMOOTHING_FACTOR;
+
+	// camera.x = player.getComponent<TransformComponent>().position.x - MAX_WIDTH_SCREEN/2;
+	// camera.y = player.getComponent<TransformComponent>().position.y - MAX_HEIGHT_SCREEN/2;
 
 
 	if (camera.x < 0)

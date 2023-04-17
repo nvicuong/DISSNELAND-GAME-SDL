@@ -55,7 +55,7 @@ public:
 
 	void update() override
 	{
-		std::cout << sprite->index << std::endl;
+		// std::cout << sprite->index << std::endl;
 		if (transform->velocity.x != 0 || transform->velocity.y != 0)
 			{
 				sprite->index = 1;
@@ -180,7 +180,6 @@ public:
 					sprite->index = 1;
 				}
 				else { sprite->index = 0; }
-				std::cout << "unW" << std::endl;
 				sprite->Play("player");
 
 				break;
@@ -191,7 +190,6 @@ public:
 				}
 				else { sprite->index = 0; }
 				transform->velocity.x = 0;
-				std::cout << "unA" << std::endl;
 				sprite->Play("player");
 				break;
 
@@ -202,7 +200,6 @@ public:
 				}
 				else { sprite->index = 0; }
 				transform->velocity.x = 0;
-				std::cout << "unD" << std::endl;
 				sprite->Play("player");
 				break;
 
@@ -214,7 +211,6 @@ public:
 					sprite->index = 1;
 				}
 				else { sprite->index = 0; }
-				std::cout << "unS" << std::endl;
 				sprite->Play("player");
 				break;
 
