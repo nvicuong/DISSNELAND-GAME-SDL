@@ -207,6 +207,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 }
 
 auto& tiles(manager.getGroup(Game::groupMap));
+auto& building(manager.getGroup(Game::groupMapBuilding));
 auto& players(manager.getGroup(Game::groupPlayers));
 auto& colliders(manager.getGroup(Game::groupColliders));
 auto& projectiles(manager.getGroup(Game::groupProjectiles));
@@ -454,6 +455,11 @@ void Game::render()
 	for (auto& e : enemies)
 	{
 		e->draw();
+	}
+
+	for (auto& d : building)
+	{
+		d->draw();
 	}
 
 	for (auto& p : projectiles)

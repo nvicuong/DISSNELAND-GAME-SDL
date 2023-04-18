@@ -46,6 +46,27 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 	}
 
 	mapFile.ignore();
+
+	for (int y = 0; y < sizeY; y++)
+	{
+		for (int x = 0; x < sizeX; x++)
+		{
+			mapFile.get(c);
+			//std::cout << "c : " << c << "       ";
+			srcY = atoi(&c) * tileSize;
+			mapFile.get(c);
+			//std::cout << "c: " << c << std::endl;
+			srcX = atoi(&c) * tileSize;
+			if (srcX != 9*tileSize && srcY != 9*tileSize)
+			{
+			AddTileBuilding(srcX, srcY, x * scaledSize, y * scaledSize, 0);
+			}
+			mapFile.ignore();
+		}
+	}
+
+	mapFile.ignore();
+
 	for (int y = 0; y < sizeY; y++)
 	{
 		for (int x = 0; x < sizeX; x++)
@@ -76,5 +97,12 @@ void Map::AddTile(int srcX, int srcY, int xpos, int ypos, int index)
 	auto& tile(manager.addEntity());
 	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, tileSize, mapScale, texID, index);
 	tile.addGroup(Game::groupMap);
+}
+
+void Map::AddTileBuilding(int srcX, int srcY, int xpos, int ypos, int index)
+{
+	auto& tile(manager.addEntity());
+	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, tileSize, mapScale, texID, index);
+	tile.addGroup(Game::groupMapBuilding);
 }
 

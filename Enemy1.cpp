@@ -5,8 +5,8 @@
 
 
 
-int dx[] = {-1, 0, 1, 0};
-int dy[] = {0, 1, 0, -1};
+int dx[] = {-1, 0, 1, 0, 1, 1, -1, -1};
+int dy[] = {0, 1, 0, -1, 1, -1, -1, 1};
 
 bool isValid(int x, int y, std::vector<std::vector<bool>>& visited) {
     if (x < 0 || x >= 20 || y < 0 || y >= 50)
@@ -36,7 +36,7 @@ void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited
             return;
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 8; i++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
 
