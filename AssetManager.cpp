@@ -26,7 +26,7 @@ void AssetManager::CreateEnemy1(Vector2D pos,int width, int height, std::string 
 	auto& collider(manager->addEntity());
 	collider.addComponent<TransformComponent>(pos.x, pos.y, width, height, 1);
 	collider.addComponent<SpriteComponent>(id, idArray, sizeidArray);
-	collider.addComponent<Enemy1>(10, "enemy1");
+	collider.addComponent<Enemy1>(10, "enemy1", pos.x, pos.y);
 	collider.addComponent<ColliderComponent>("enemy1");
 	collider.addComponent<StatusBar>(100, 100, width, "enemy1");
 	collider.addGroup(Game::groupEnemy);
@@ -38,7 +38,7 @@ void AssetManager::CreateEnemy2(Vector2D pos, int width, int height, std::string
 	collider.addComponent<TransformComponent>(pos.x, pos.y, width, height, 1);
 	collider.addComponent<SpriteComponent>(id, idArray, sizeidArray);
 	collider.addComponent<ColliderComponent>("enemy2");
-	collider.addComponent<Enemy1>(10, "enemy2");
+	collider.addComponent<Enemy1>(10, "enemy2", pos.x, pos.y);
 	collider.addComponent<StatusBar>(100, 100, width, "enemy2");
 	collider.addGroup(Game::groupEnemy);
 }

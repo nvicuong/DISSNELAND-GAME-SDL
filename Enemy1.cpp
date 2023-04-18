@@ -64,10 +64,10 @@ void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited
     //           << "-----------------" << std::endl;
 }
 
-bool Enemy1::huntPlayerVer2(const SDL_Rect& eneRect, const SDL_Rect& recP)
+bool Enemy1::huntPlayerVer2(const int x, const int y, const int w, const int h)
 {
     
-    if (abs(eneRect.x - xpos) >= 48 || abs(eneRect.y - ypos) >= 48)
+    if (abs(transform->position.x - xpos) >= 48 || abs(transform->position.y - ypos) >= 48)
     {
     std::vector<std::vector<bool>> visited(20, std::vector<bool>(50));
     std::vector<std::vector<int>> dist(20, std::vector<int>(50));
@@ -75,11 +75,11 @@ bool Enemy1::huntPlayerVer2(const SDL_Rect& eneRect, const SDL_Rect& recP)
     std::vector<std::pair<int, int>> path[20][50];
     std::vector<std::pair<int, int>> vec2D[20][50];
 
-    int sx = eneRect.y / 48;
-    int sy = eneRect.x / 48;
+    int sx = transform->position.y / 48;
+    int sy = transform->position.x / 48;
 
-    int ex = (recP.y + (recP.h/2)) / 48;
-    int ey = (recP.x + (recP.w/2)) / 48;
+    int ex = (y + (h/2)) / 48;
+    int ey = (x + (w/2)) / 48;
 
     bfs(sx, sy, ex, ey, visited, dist, path, vec2D);
     
@@ -90,8 +90,8 @@ bool Enemy1::huntPlayerVer2(const SDL_Rect& eneRect, const SDL_Rect& recP)
         // std::cout << "no empty" << std::endl;
         Vector2D vel(2*x, 2*y);
         transform->velocity = vel;
-        xpos = eneRect.x;
-        ypos = eneRect.y;
+        xpos = transform->position.x;
+        ypos = transform->position.y;
         
         sprite->index = 1;
         sprite->Play(tag);
@@ -254,7 +254,14 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
     }
         attacked = 0;
         //std::cout << "xx";
-        Enemy1::huntPlayerVer2(eneRect, recP);
+        if (Collision::findAABB(eneRect, recP))
+        {
+            huntPlayerVer2(recP.x, recP.y, recP.w, recP.h);
+        }
+        else
+        {
+            huntPlayerVer2(constX, constY, 0, 0);
+        }
         
         if (transform->velocity.x > 0)
         {

@@ -12,6 +12,8 @@ class Enemy1 : public Component
 public:
 	int xpos;
 	int ypos;
+	float constX;
+	float constY;
 	double periodTime = 0;
 	double timer = 0;
 	bool attacked;
@@ -20,7 +22,7 @@ public:
 	double hurtedTimer = 0;
 	bool checkHurted = 0;
 	//SDL_Rect* eneRect;
-	Enemy1(int sp, std::string t) : speed(sp), tag(t)
+	Enemy1(int sp, std::string t, float x, float y) : speed(sp), tag(t), constX(x), constY(y)
 	{}
 	~Enemy1() {};
 
@@ -63,7 +65,7 @@ public:
 	bool huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void getHurt();
-	bool huntPlayerVer2(const SDL_Rect& eneRect, const SDL_Rect& recP);
+	bool huntPlayerVer2(const int x, const int y, const int w, const int h);
 
 private:
 	TransformComponent* transform;
