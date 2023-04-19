@@ -53,7 +53,7 @@ Animation aniEnemy1[] = {
 	Animation(IDLE_ENEMY1_FRAMES, SPEED, IDLE_ENEMY1_WIDTH, IDLE_ENEMY1_HEIGHT),
 	Animation(HURT_ENEMY1_FRAMES, SPEED, HURT_ENEMY1_WIDTH, HURT_ENEMY1_HEIGHT),
 	Animation(ATTACK_ENEMY1_FRAMES, SPEED, ATTACK_ENEMY1_WIDTH, ATTACK_ENEMY1_HEIGHT),
-	Animation(DEATH_ENEMY1_FRAMES, SPEED, DEATH_ENEMY1_WIDTH, DEATH_ENEMY1_HEIGHT),
+	Animation(DEATH_ENEMY1_FRAMES, SPEED_DEATH_ENEMY, DEATH_ENEMY1_WIDTH, DEATH_ENEMY1_HEIGHT),
 };
 int sizeaniEnemy1 = 5;
 
@@ -62,9 +62,19 @@ Animation aniEnemy2[] = {
 	Animation(WALK_ENEMY2_FRAMES, SPEED, WALK_ENEMY2_WIDTH, WALK_ENEMY2_HEIGHT),
 	Animation(HURT_ENEMY2_FRAMES, SPEED, HURT_ENEMY2_WIDTH, HURT_ENEMY2_HEIGHT),
 	Animation(ATTACK_ENEMY2_FRAMES, ATTACK_SPEED, ATTACK_ENEMY2_WIDTH, ATTACK_ENEMY2_HEIGHT),
-	Animation(DEATH_ENEMY2_FRAMES, SPEED, DEATH_ENEMY2_WIDTH, DEATH_ENEMY2_HEIGHT),
+	Animation(DEATH_ENEMY2_FRAMES, SPEED_DEATH_ENEMY, DEATH_ENEMY2_WIDTH, DEATH_ENEMY2_HEIGHT),
 };
 int sizeaniEnemy2 = 5;
+
+Animation aniBoss[] = {
+	Animation(IDLE_BOSS_FRAMES, SPEED, IDLE_BOSS_WIDTH, IDLE_BOSS_HEIGHT),
+	Animation(WALK_BOSS_FRAMES, SPEED, WALK_BOSS_WIDTH, WALK_BOSS_HEIGHT),
+	Animation(HURT_BOSS_FRAMES, SPEED, HURT_BOSS_WIDTH, HURT_BOSS_HEIGHT),
+	Animation(ATTACK_BOSS_FRAMES, ATTACK_SPEED, ATTACK_BOSS_WIDTH, ATTACK_BOSS_HEIGHT),
+	Animation(RUN_BOSS_FRAMES, SPEED, RUN_BOSS_WIDTH, RUN_BOOS_HEIGHT),
+};
+int sizeaniBoss = 5;
+
 
 
 bool Game::isRunning = false;
@@ -160,6 +170,13 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	assets->AddTexture("enemy2", "assets/MonstersEnemies/Skeleton/Attack_Enemy2_80x60_8frames.png");
 	assets->AddTexture("enemy2", "assets/MonstersEnemies/Skeleton/DeathEnemy2_60x53_4frames.png");
 
+	assets->AddVector("boss");
+	assets->AddTexture("boss", "assets/MonstersEnemies/Boss/idle_53x42_5frames.png");
+	assets->AddTexture("boss", "assets/MonstersEnemies/Boss/walk_53x42_4frames.png");
+	assets->AddTexture("boss", "assets/MonstersEnemies/Boss/hurt_53x42_3frames.png");
+	assets->AddTexture("boss", "assets/MonstersEnemies/Boss/attack_75x80_9frames.png");
+	assets->AddTexture("boss", "assets/MonstersEnemies/Boss/run_53x42_4frames.png");
+
 
 
 	assets->AddVector("projectile");
@@ -241,6 +258,7 @@ void Game::handleEvents()
 double Game::periodTimeGame = SDL_GetTicks()/1000;
 //double periodTime2 = SDL_GetTicks()/1000;
 double countTimeGame = 0;
+int fired = 0;
 void Game::update()
 {
 
@@ -272,15 +290,7 @@ void Game::update()
 	manager.refresh();
 	manager.update();
 
-	for (auto& c : colliders)
-	{
-		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-		if (Collision::AABB(playerCol, cCol))
-		{
-			player.getComponent<TransformComponent>().position = playerPos;
-			//std::cout << "width: " << playerCol.w << "  height: " << playerCol.h << std::endl;
-		}
-	}
+	
 
 		/*timer1 += deltaTime(periodTime1);*/
 	for (auto& e : enemies)
@@ -296,7 +306,22 @@ void Game::update()
 		//std::cout << "index: " << e->getComponent<SpriteComponent>().index << std::endl;
 		if (e->getComponent<Enemy1>().hurtedTimer < 2)
 		{
+			if (e->getComponent<StatusBar>().health <= 0)
+			{
+				e->getComponent<SpriteComponent>().index = 4;
+				e->getComponent<SpriteComponent>().stillDead = 1;
+				e->getComponent<SpriteComponent>().Play(s);
+				// e->getComponent<Enemy1>().getDeath();
+				if (e->getComponent<Enemy1>().hurtedTimer >= 1)
+				{
+				e->destroy();
+				enemyRemnants -= 1;
+				}
+			}
+			else
+			{
 			e->getComponent<Enemy1>().getHurt();
+			}
 		}
 		else
 		{
@@ -313,7 +338,7 @@ void Game::update()
 			{
 				if (e->getComponent<Enemy1>().timer > 2)
 				{
-					e->getComponent<Enemy1>().fireGun(eCol, playerCol, assets);
+					e->getComponent<Enemy1>().fireGun(eCol, playerCol, assets, 0);
 					e->getComponent<Enemy1>().timer = 0;
 				}
 			}
@@ -347,6 +372,42 @@ void Game::update()
 				}
 			}
 		}
+		if (s == "boss")
+		{
+			if (player.getComponent<SpriteComponent>().dead == 0)
+			{
+				//std::cout << "timer2: " << timer2 << std::endl;
+
+				int timeFireGun = static_cast<int>(e->getComponent<Enemy1>().timer);
+				if (timeFireGun % 10 == 0 && fired != timeFireGun)
+				{
+					e->getComponent<Enemy1>().fireGun(eCol, playerCol, assets, 1);
+					fired = timeFireGun;
+				}
+
+				e->getComponent<Enemy1>().attackPlayer(eCol, playerCol);
+				//std::cout << "hit: " << e->getComponent<Enemy1>().hit << "  index: " << e->getComponent<SpriteComponent>().index << std::endl;
+				if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked && player.getComponent<SpriteComponent>().index != 5)
+				{
+					// std::cout << "dam trung" << std::endl;
+					
+					player.getComponent<StatusBar>().health -= 10;
+					player.getComponent<KeyboardController>().hurtedTimer = 0;
+					e->getComponent<Enemy1>().hit = 0;
+					
+					//std::cout << "playerHealth: " << player.getComponent<StatusBar>().health << std::endl;
+					
+					//e->getComponent<Enemy1>().check = 1;
+					e->getComponent<Enemy1>().timer = 0;
+					//std::cout << "health: " << player.getComponent<StatusBar>().health << std::endl;
+					//std::cout << "check timer2: " << timer2 << std::endl;
+				}
+				else
+				{
+					e->getComponent<Enemy1>().timer += deltaTime(e->getComponent<Enemy1>().periodTime);
+				}
+			}
+		}
 
 		}
 		/*if (e == *(enemies.end() - 1) && e->getComponent<Enemy1>().timer > 2)
@@ -368,11 +429,7 @@ void Game::update()
 				player.getComponent<KeyboardController>().hit = 0;
 				//std::cout << e->getComponent<ColliderComponent>().tag << "Heath: " << e->getComponent<StatusBar>().health << std::endl;
 			}
-			if (e->getComponent<StatusBar>().health <= 0)
-			{
-				e->destroy();
-				enemyRemnants -= 1;
-			}
+			
 		}
 		
 	}
@@ -383,6 +440,7 @@ void Game::update()
 	{
 		//std::cout << projectiles.size() << " ";
 		auto& p = projectiles[i];
+		p->getComponent<ProjectileComponent>().follow(playerCol);
 		if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
 		{
 			if (player.getComponent<SpriteComponent>().index != 5)
@@ -398,13 +456,31 @@ void Game::update()
 			{
 				player.getComponent<SpriteComponent>().dead = 1;
 				player.getComponent<TransformComponent>().velocity = Vector2D(0, 0);
+				player.getComponent<SpriteComponent>().index = 4;
 			}
 			if (player.getComponent<SpriteComponent>().dead)
 			{
+				if (player.getComponent<KeyboardController>().hurtedTimer > 5)
+				{
 				countTimeGame = 0;
 				isRunningMenu = 1;
 				openMenu = 0;
+				}
 			}
+
+		for (auto& c : colliders)
+	{
+		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+		// if (Collision::AABB1(playerCol, cCol))
+		// {
+		// 	player.getComponent<TransformComponent>().position.x = playerPos.x;
+		// }
+		if (Collision::AABB(playerCol, cCol))
+		{
+			player.getComponent<TransformComponent>().position = playerPos;
+			//std::cout << "width: " << playerCol.w << "  height: " << playerCol.h << std::endl;
+		}
+	}
 
 	float newXposCam = player.getComponent<TransformComponent>().position.x - MAX_WIDTH_SCREEN/2;
 	float newYposCam = player.getComponent<TransformComponent>().position.y - MAX_HEIGHT_SCREEN/2;
@@ -494,10 +570,13 @@ void Game::initObject()
 
 
 	assets->CreateEnemy2(Vector2D(14*48,7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
-	assets->CreateEnemy2(Vector2D(16*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
-	assets->CreateEnemy2(Vector2D(18*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	// assets->CreateEnemy2(Vector2D(16*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	// assets->CreateEnemy2(Vector2D(18*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+
+	// assets->CreateBoss(Vector2D(15*48, 7*48), IDLE_BOSS_WIDTH, IDLE_BOSS_HEIGHT, "boss", aniBoss, sizeaniBoss);
 
 	player.getComponent<SpriteComponent>().dead = 0;
+	player.getComponent<SpriteComponent>().stillDead = 0;
 	player.getComponent<StatusBar>().health = 100;
 	player.getComponent<TransformComponent>().position = Vector2D(17*48, 7*48);
 	player.getComponent<SpriteComponent>().index = 0;

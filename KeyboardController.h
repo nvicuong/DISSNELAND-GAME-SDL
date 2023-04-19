@@ -69,10 +69,16 @@ public:
 		<< "keyUp:     " << stateKeyUp << std::endl << "---------------" << std::endl;*/
 		//std::cout << transform->velocity.x << " " << transform->velocity.y << std::endl;
 			//std::cout << "currentFrame = " << sprite->currentFrame << std::endl;
-		if (hurtedTimer < 0.5)
+		if (hurtedTimer < 0.5 && sprite->dead == 0)
 		{
 			sprite->index = 2;
 			transform->velocity = Vector2D(0, 0);
+			sprite->Play("player");
+		}
+		else if (sprite->dead)
+		{
+			sprite->index = 4;
+			sprite->stillDead = 1;
 			sprite->Play("player");
 		}
 		else if (slide)
@@ -237,18 +243,7 @@ public:
 				break;
 			}
 		}
-		if (sprite->dead)
-		{
-			if (sprite->currentFrame == 11)
-			{
-				sprite->stillDead = 1;
-			}
-			if (!sprite->stillDead)
-			{
-			sprite->index = 4;
-			sprite->Play("player");
-			}
-		}
+		
 		if (!doHit)
 		{ sprite->Play("player"); }
 		

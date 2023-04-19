@@ -82,8 +82,7 @@ public:
 		periodTime = latterTime;
 		latterTime = SDL_GetTicks();
 		deltaTime = latterTime - periodTime;
-		if (stillDead == 0)
-		{
+	
 		timer += deltaTime;
 		if (timer > speed )
 		{
@@ -91,10 +90,17 @@ public:
 			timer = 0;
 		}
 
-		}
+		
 		if (currentFrame > frames - 1)
 		{
+			if (stillDead)
+			{
+				currentFrame = frames - 1;
+			}
+			else
+			{
 			currentFrame = 0;
+			}
 		}
 
 		/*transform->width = width;

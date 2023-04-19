@@ -7,7 +7,8 @@
 class ProjectileComponent : public Component
 {
 public:
-	ProjectileComponent(int rng, int sp, Vector2D vel) : range(rng), speed(sp), velocity(vel)
+	bool followPlayer;
+	ProjectileComponent(int rng, int sp, Vector2D vel, bool f) : range(rng), speed(sp), velocity(vel), followPlayer(f)
 	{}
 	~ProjectileComponent() {};
 
@@ -26,8 +27,20 @@ public:
 		{
 			entity->destroy();
 		}
-		
-		
+	}
+
+	void follow(const SDL_Rect& recP)
+	{
+		if (followPlayer)
+		{
+			float newXposProj = recP.x + (recP.w / 2);
+			float newYposProj = recP.y + (recP.h / 2);
+
+			std::cout << newXposProj - transform->position.x << " " << newXposProj - transform->position.y << std::endl;
+			transform->position.x = transform->position.x + (newXposProj - transform->position.x) * FOLLOW_PLAYER;
+			transform->position.y = transform->position.y + (newXposProj - transform->position.y) * FOLLOW_PLAYER;
+
+		}
 	}
 
 

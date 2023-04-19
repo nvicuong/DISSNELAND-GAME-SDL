@@ -8,7 +8,8 @@
 int dx[] = {-1, 0, 1, 0, 1, 1, -1, -1};
 int dy[] = {0, 1, 0, -1, 1, -1, -1, 1};
 
-bool isValid(int x, int y, std::vector<std::vector<bool>>& visited) {
+bool isValid(int x, int y, std::vector<std::vector<bool>>& visited)
+{
     if (x < 0 || x >= 20 || y < 0 || y >= 50)
         return false;
     if (Map::map1[x][y] == 1 || visited[x][y])
@@ -16,7 +17,8 @@ bool isValid(int x, int y, std::vector<std::vector<bool>>& visited) {
     return true;
 }
 
-void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited, std::vector<std::vector<int>>& dist, std::vector<std::pair<int, int>> path[20][50], std::vector<std::pair<int, int>> vec2D[20][50]) {
+void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited, std::vector<std::vector<int>>& dist, std::vector<std::pair<int, int>> path[20][50], std::vector<std::pair<int, int>> vec2D[20][50])
+{
     std::queue<std::pair<int, int>> q;
 
     visited[sx][sy] = true;
@@ -25,22 +27,26 @@ void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited
     std::pair<int, int> qPair(sx, sy);
     q.push(qPair);
 
-    while (!q.empty()) {
+    while (!q.empty())
+    {
         std::pair<int, int> node = q.front();
         q.pop();
 
         int x = node.first;
         int y = node.second;
 
-        if (x == ex && y == ey) {
+        if (x == ex && y == ey)
+        {
             return;
         }
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++)
+        {
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            if (isValid(nx, ny, visited)) {
+            if (isValid(nx, ny, visited))
+            {
                 visited[nx][ny] = true;
                 dist[nx][ny] = dist[x][y] + 1;
                 std::pair<int, int> r(nx, ny);
@@ -56,7 +62,8 @@ void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited
             }
         }
     }
-    for (auto p : vec2D[ex][ey]) {
+    for (auto p : vec2D[ex][ey])
+    {
         std::cout << p.first << " " << p.second <<std::endl;
     }
     // std::cout << "sx: " << sx << " sy: " << sy << std::endl
@@ -66,44 +73,60 @@ void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited
 
 bool Enemy1::huntPlayerVer2(const int x, const int y, const int w, const int h)
 {
-    
+
     if (abs(transform->position.x - xpos) >= 48 || abs(transform->position.y - ypos) >= 48)
     {
-    std::vector<std::vector<bool>> visited(20, std::vector<bool>(50));
-    std::vector<std::vector<int>> dist(20, std::vector<int>(50));
+        std::vector<std::vector<bool>> visited(20, std::vector<bool>(50));
+        std::vector<std::vector<int>> dist(20, std::vector<int>(50));
 
-    std::vector<std::pair<int, int>> path[20][50];
-    std::vector<std::pair<int, int>> vec2D[20][50];
+        std::vector<std::pair<int, int>> path[20][50];
+        std::vector<std::pair<int, int>> vec2D[20][50];
 
-    int sx = transform->position.y / 48;
-    int sy = transform->position.x / 48;
+        int sx = transform->position.y / 48;
+        int sy = transform->position.x / 48;
 
-    int ex = (y + (h/2)) / 48;
-    int ey = (x + (w/2)) / 48;
+        int ex = (y + (h/2)) / 48;
+        int ey = (x + (w/2)) / 48;
 
-    bfs(sx, sy, ex, ey, visited, dist, path, vec2D);
+        bfs(sx, sy, ex, ey, visited, dist, path, vec2D);
+
+        if (!vec2D[ex][ey].empty())
+        {
+            int x = vec2D[ex][ey].front().first;
+            int y = vec2D[ex][ey].front().second;
+            // std::cout << "no empty" << std::endl;
+            if (tag == "boss")
+            {
+                Vector2D velBoss(x, y);
+                transform->velocity = velBoss;
+                sprite->index = 1;
+                if (timer >= 20)
+                {
+                    Vector2D velRun(4*x, 4*y);
+                    transform->velocity = velRun;
+                    sprite->index = 4;
+                }
+            }
+            else
+            {
+                Vector2D velEnemy(2*x, 2*y);
+                transform->velocity = velEnemy;
+                sprite->index = 1;
+            }
+            xpos = transform->position.x;
+            ypos = transform->position.y;
+
     
-    if (!vec2D[ex][ey].empty())
-    {
-        int x = vec2D[ex][ey].front().first;
-        int y = vec2D[ex][ey].front().second;
-        // std::cout << "no empty" << std::endl;
-        Vector2D vel(2*x, 2*y);
-        transform->velocity = vel;
-        xpos = transform->position.x;
-        ypos = transform->position.y;
-        
-        sprite->index = 1;
-        sprite->Play(tag);
-        return true;
-    }
-    else
-    {
-        // std::cout << "empty" << std::endl;
-        Vector2D vel(0, 0);
-        transform->velocity = vel;
-        return false;
-    }
+            sprite->Play(tag);
+            return true;
+        }
+        else
+        {
+            // std::cout << "empty" << std::endl;
+            Vector2D vel(0, 0);
+            transform->velocity = vel;
+            return false;
+        }
     }
     return false;
 
@@ -151,13 +174,24 @@ void Enemy1::walkAround()
 bool Enemy1::completedAttack()
 {
     //std::cout << sprite->index << std::endl;
+    if (tag == "boss")
+    {
+        if ((sprite->currentFrame >= 3) && sprite->index == 3)
+        {
+            attacked = 1;
+            return true;
+        }
+    }
+    else
+    {
     if ((sprite->currentFrame >= sprite->frames - 1) && sprite->index == 3)
     {
-    // std::cout << "currenFrame: " << sprite->currentFrame << std::endl;
-    // std::cout << "frames: " << sprite->frames << std::endl;
+        // std::cout << "currenFrame: " << sprite->currentFrame << std::endl;
+        // std::cout << "frames: " << sprite->frames << std::endl;
         //std::cout << "..";
         attacked = 1;
         return true;
+    }
     }
     return false;
 }
@@ -203,14 +237,25 @@ Vector2D Enemy1::getVel(const SDL_Rect& eneRect, const SDL_Rect& recP)
     return Vector2D(idX, idY);
 }
 
-void Enemy1::fireGun(const SDL_Rect& eneRect, const SDL_Rect& recP, AssetManager* assets)
+void Enemy1::fireGun(const SDL_Rect& eneRect, const SDL_Rect& recP, AssetManager* assets, bool f)
 {
+    if (f)
+    {       
+            float posX = transform->position.x;
+            float posY = transform->position.y;
+            Vector2D vel(0, 0);
+            assets->CreateProJectile(Vector2D(posX, posY), vel, 10, 10, 200, 2, f, "projectile", 0, aniProject, sizeaniProject);
+    }
+    else
+    {
     if (Collision::findAABB(eneRect, recP))
     {
         float posX = transform->position.x;
         float posY = transform->position.y;
         Vector2D getV = Enemy1::getVel(eneRect, recP);
-        assets->CreateProJectile(Vector2D(posX, posY), getV, 10, 10, 200, 2, "projectile", 0, aniProject, sizeaniProject);
+        assets->CreateProJectile(Vector2D(posX, posY), getV, 10, 10, 200, 2, f, "projectile", 0, aniProject, sizeaniProject);
+
+    }
 
     }
 }
@@ -222,7 +267,7 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
         //std::cout << sprite->currentFrame << std::endl;
         if (eneRect.x % 48 == 0 && eneRect.y % 48 == 0)
         {
-        transform->velocity = Vector2D(0, 0);
+            transform->velocity = Vector2D(0, 0);
         }
         bool a;
         a = completedAttack();
@@ -244,14 +289,18 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
     }
     else
     {
-    if (transform->velocity.x != 0 || transform->velocity.y != 0)
-    {
-        sprite->index = 1;
-    }
-    else
-    {
-        sprite->index = 0;
-    }
+        if (transform->velocity.x != 0 || transform->velocity.y != 0)
+        {
+            if (sprite->index != 4)
+            {
+            sprite->index = 1;
+            }
+        }
+        else
+        {
+            sprite->index = 0;
+        }
+
         attacked = 0;
         //std::cout << "xx";
         if (Collision::findAABB(eneRect, recP))
@@ -262,7 +311,7 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
         {
             huntPlayerVer2(constX, constY, 0, 0);
         }
-        
+
         if (transform->velocity.x > 0)
         {
             sprite->spriteFlip = SDL_FLIP_NONE;
@@ -281,12 +330,20 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
             sprite->Play(tag);
         }
     }
-    
+
 }
 
 void Enemy1::getHurt()
 {
     sprite->index = 2;
     transform->velocity = Vector2D(0, 0);
+    sprite->Play(tag);
+}
+
+void Enemy1::getDeath()
+{
+    sprite->index = 4;
+    transform->velocity = Vector2D(0, 0);
+    // sprite->stillDead = 1;
     sprite->Play(tag);
 }

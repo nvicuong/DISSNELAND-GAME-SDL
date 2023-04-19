@@ -61,10 +61,11 @@ public:
 	Vector2D getVel(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void walkAround();
 	bool completedAttack();
-	void fireGun(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets);
+	void fireGun(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets, bool f);
 	bool huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void getHurt();
+	void getDeath();
 	bool huntPlayerVer2(const int x, const int y, const int w, const int h);
 
 private:
