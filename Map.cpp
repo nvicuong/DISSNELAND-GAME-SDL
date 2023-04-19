@@ -105,4 +105,3 @@ void Map::AddTileBuilding(int srcX, int srcY, int xpos, int ypos, int index)
 	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, tileSize, mapScale, texID, index);
 	tile.addGroup(Game::groupMapBuilding);
 }
-

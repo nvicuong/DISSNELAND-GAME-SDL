@@ -7,6 +7,7 @@ class Map
 {
 public:
 	static int map1[20][50];
+	
 	int sizeWidthMap;
 	int sizeHeightMap;
 	int scaledSize;

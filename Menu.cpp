@@ -158,6 +158,7 @@ bool Menu::handleEvents()
                 Game::periodTimeGame = SDL_GetTicks()/1000;
                 Game::resetGame = 1;
                 Game::isRunningMenu = 0;
+                Game::mapCurrent = 1;
             }
             if (managerMenu[4].checkMotion(event.motion.x, event.motion.y))
             {

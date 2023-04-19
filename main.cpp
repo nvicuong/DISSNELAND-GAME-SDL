@@ -31,7 +31,14 @@ int main(int argc, char *argv[])
 		{
 			if (Game::resetGame)
 			{
-				game->initObject();
+				if (Game::mapCurrent == 1)
+				{
+					game->initObject1();
+				}
+				else
+				{
+					game->initObject2();
+				}
 			}
 		game->handleEvents();
 		game->update();

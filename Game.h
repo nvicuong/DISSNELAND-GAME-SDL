@@ -19,6 +19,7 @@ public:
 	static bool isRunningMenu;
 	static int openMenu;
 	static bool resetGame;
+	static int mapCurrent;
 	static int enemyRemnants;
 	static double periodTimeGame;
 	SDL_Texture* barText;
@@ -26,7 +27,8 @@ public:
 	~Game();
 
 	void init(const char* title, int width, int height, bool fullscreen);
-	void initObject();
+	void initObject1();
+	void initObject2();
 
 	void handleEvents();
 	void update();
@@ -46,7 +48,7 @@ public:
 		groupMap,
 		groupMapBuilding,
 		groupPlayers,
-		groupColliders, 
+		groupColliders,
 		groupProjectiles,
 		groupEnemy
 	};

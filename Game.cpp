@@ -20,6 +20,7 @@ TTF_Font* font = NULL;
 bool Game::isRunningMenu = 1;
 int Game::openMenu = 1;
 bool Game::resetGame = 0;
+int Game::mapCurrent = 1;
 int Game::enemyRemnants = 0;
 
 
@@ -185,7 +186,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 	map = new Map("terrain", 3, 16);
 
-	map->LoadMap("assets/tilemap.map", 50, 20);
+	// map->LoadMap("assets/tilemap_1.map", 50, 20);
 	
 	map->sizeWidthMap = 50 * map->scaledSize - MAX_WIDTH_SCREEN;
 	map->sizeHeightMap = 20 * map->scaledSize - MAX_HEIGHT_SCREEN;
@@ -225,8 +226,10 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 auto& tiles(manager.getGroup(Game::groupMap));
 auto& building(manager.getGroup(Game::groupMapBuilding));
-auto& players(manager.getGroup(Game::groupPlayers));
 auto& colliders(manager.getGroup(Game::groupColliders));
+
+
+auto& players(manager.getGroup(Game::groupPlayers));
 auto& projectiles(manager.getGroup(Game::groupProjectiles));
 auto& enemies(manager.getGroup(Game::groupEnemy));
 void Game::handleEvents()
@@ -290,6 +293,11 @@ void Game::update()
 	manager.refresh();
 	manager.update();
 
+	if (enemyRemnants == 0)
+	{
+		Game::resetGame = 1;
+		Game::mapCurrent = 2;
+	}
 	
 
 		/*timer1 += deltaTime(periodTime1);*/
@@ -513,6 +521,7 @@ void Game::render()
 
 	SDL_DestroyTexture(barText);
 	barText = NULL;
+	
 	for (auto& t : tiles)
 	{
 		t->draw();
@@ -537,11 +546,12 @@ void Game::render()
 	{
 		d->draw();
 	}
-
+	
 	for (auto& p : projectiles)
 	{
 		p->draw();
 	}
+
 	barText = TextureManager::LoadTexture("assets/bar.png");
 	SDL_RenderCopy(renderer, barText, NULL, &destBarText);
 	player.getComponent<StatusBar>().draw();
@@ -557,13 +567,36 @@ void Game::clean()
 	SDL_Quit();
 }
 
-void Game::initObject()
+void Game::initObject1()
 {
 
 	for (auto e : enemies)
 	{
 		e->destroy();
 	}
+
+	tiles.clear();
+	building.clear();
+	colliders.clear();
+
+	// for (auto t : tiles)
+	// {
+	// 	t->destroy();
+	// }
+
+	// for (auto b : building)
+	// {
+	// 	b->destroy();
+	// }
+
+	// for (auto c : colliders)
+	// {
+	// 	c->destroy();
+	// }
+
+	// manager.refresh();
+
+	map->LoadMap("assets/tilemap_1.map", 50, 20);
 
 	assets->CreateEnemy1(Vector2D(600, 640), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
 	assets->CreateEnemy1(Vector2D(800, 800), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
@@ -582,7 +615,61 @@ void Game::initObject()
 	player.getComponent<SpriteComponent>().index = 0;
 	player.getComponent<SpriteComponent>().Play("player");
 
-	enemyRemnants = 5;
+	enemyRemnants = 3;
+
+	resetGame = 0;
+}
+
+void Game::initObject2()
+{
+
+	for (auto e : enemies)
+	{
+		e->destroy();
+	}
+
+	tiles.clear();
+
+	// for (auto t : tiles)
+	// {
+	// 	t->destroy();
+	// }
+
+	building.clear();
+
+	// for (auto b : building)
+	// {
+	// 	b->destroy();
+	// }
+
+	colliders.clear();
+	// for (auto c : colliders)
+	// {
+	// 	c->destroy();
+	// }
+
+	// manager.refresh();
+
+	map->LoadMap("assets/tilemap_2.map", 50, 20);
+
+	assets->CreateEnemy1(Vector2D(600, 640), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
+	assets->CreateEnemy1(Vector2D(800, 800), 40, 30, "enemy1", aniEnemy1, sizeaniEnemy1);
+
+
+	// assets->CreateEnemy2(Vector2D(14*48,7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	// assets->CreateEnemy2(Vector2D(16*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+	// assets->CreateEnemy2(Vector2D(18*48, 7*48), IDLE_PLAYER_WIDTH, IDLE_PLAYER_HEIGHT, "enemy2", aniEnemy2, sizeaniEnemy2);
+
+	assets->CreateBoss(Vector2D(15*48, 7*48), IDLE_BOSS_WIDTH, IDLE_BOSS_HEIGHT, "boss", aniBoss, sizeaniBoss);
+
+	player.getComponent<SpriteComponent>().dead = 0;
+	player.getComponent<SpriteComponent>().stillDead = 0;
+	player.getComponent<StatusBar>().health = 100;
+	player.getComponent<TransformComponent>().position = Vector2D(17*48, 7*48);
+	player.getComponent<SpriteComponent>().index = 0;
+	player.getComponent<SpriteComponent>().Play("player");
+
+	enemyRemnants = 3;
 
 	resetGame = 0;
 }
