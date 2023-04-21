@@ -197,7 +197,6 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	player.addComponent<TransformComponent>(800, 500, ATTACK_PLAYER_HEIGHT, ATTACK_PLAYER_WIDTH, 1);
 	player.addComponent<SpriteComponent>("player", aniPlayer, sizeaniPlayer);
 	player.addComponent<KeyboardController>();
-	player.addComponent<ColliderComponent>("player");
 	player.addComponent<StatusBar>(100, 100, IDLE_PLAYER_WIDTH, "player");
 	player.addGroup(groupPlayers);
 
@@ -268,7 +267,8 @@ void Game::update()
 	countTimeGame += deltaTime(periodTimeGame);
 	
 
-	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
+	SDL_Rect playerCol = player.getComponent<SpriteComponent>().posRect;
+	// SDL_Rect playerCol = {player.getComponent<TransformComponent>().position.x, player.getComponent<TransformComponent>().position.y, player.getComponent<TransformComponent>().width, player.getComponent<TransformComponent>().height};
 	Vector2D playerPos = player.getComponent<TransformComponent>().position;
 	double dlTPlayer = deltaTime(player.getComponent<KeyboardController>().periodTime);
 	player.getComponent<KeyboardController>().hurtedTimer += dlTPlayer;
@@ -303,9 +303,9 @@ void Game::update()
 		/*timer1 += deltaTime(periodTime1);*/
 	for (auto& e : enemies)
 	{
-		SDL_Rect eCol = e->getComponent<ColliderComponent>().collider;
-		//std::cout << e->getComponent<ColliderComponent>().tag << std::endl;
-		std::string s = e->getComponent<ColliderComponent>().tag;
+		// SDL_Rect eCol = e->getComponent<SpriteComponent>().posRect;
+	
+		std::string s = e->getComponent<SpriteComponent>().tag;
 		//std::cout << s << " timer: " << e->getComponent<Enemy1>().timer << std::endl;
 		double dlT = deltaTime(e->getComponent<Enemy1>().periodTime);
 		e->getComponent<Enemy1>().hurtedTimer += dlT;
@@ -346,7 +346,7 @@ void Game::update()
 			{
 				if (e->getComponent<Enemy1>().timer > 2)
 				{
-					e->getComponent<Enemy1>().fireGun(eCol, playerCol, assets, 0);
+					e->getComponent<Enemy1>().fireGun(e->getComponent<SpriteComponent>().posRect, playerCol, assets, 0);
 					e->getComponent<Enemy1>().timer = 0;
 				}
 			}
@@ -356,7 +356,7 @@ void Game::update()
 			if (player.getComponent<SpriteComponent>().dead == 0)
 			{
 				//std::cout << "timer2: " << timer2 << std::endl;
-				e->getComponent<Enemy1>().attackPlayer(eCol, playerCol);
+				e->getComponent<Enemy1>().attackPlayer(e->getComponent<SpriteComponent>().posRect, playerCol);
 				//std::cout << "hit: " << e->getComponent<Enemy1>().hit << "  index: " << e->getComponent<SpriteComponent>().index << std::endl;
 				if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked && player.getComponent<SpriteComponent>().index != 5)
 				{
@@ -389,11 +389,11 @@ void Game::update()
 				int timeFireGun = static_cast<int>(e->getComponent<Enemy1>().timer);
 				if (timeFireGun % 10 == 0 && fired != timeFireGun)
 				{
-					e->getComponent<Enemy1>().fireGun(eCol, playerCol, assets, 1);
+					e->getComponent<Enemy1>().fireGun(e->getComponent<SpriteComponent>().posRect, playerCol, assets, 1);
 					fired = timeFireGun;
 				}
 
-				e->getComponent<Enemy1>().attackPlayer(eCol, playerCol);
+				e->getComponent<Enemy1>().attackPlayer(e->getComponent<SpriteComponent>().posRect, playerCol);
 				//std::cout << "hit: " << e->getComponent<Enemy1>().hit << "  index: " << e->getComponent<SpriteComponent>().index << std::endl;
 				if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked && player.getComponent<SpriteComponent>().index != 5)
 				{
@@ -423,7 +423,7 @@ void Game::update()
 			e->getComponent<Enemy1>().timer = 0;
 			}*/
 		
-		if (Collision::AABB(playerCol, eCol))
+		if (Collision::AABB(playerCol, e->getComponent<SpriteComponent>().posRect))
 		{
 			e->getComponent<Enemy1>().xpos = 0;
 			e->getComponent<Enemy1>().ypos = 0;
@@ -449,11 +449,11 @@ void Game::update()
 		//std::cout << projectiles.size() << " ";
 		auto& p = projectiles[i];
 		p->getComponent<ProjectileComponent>().follow(playerCol);
-		if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
+		if (Collision::AABB(player.getComponent<SpriteComponent>().posRect, p->getComponent<SpriteComponent>().posRect))
 		{
 			if (player.getComponent<SpriteComponent>().index != 5)
 			{
-			player.getComponent<StatusBar>().getDamage(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider);
+			player.getComponent<StatusBar>().getDamage(player.getComponent<SpriteComponent>().posRect, p->getComponent<SpriteComponent>().posRect);
 			player.getComponent<KeyboardController>().hurtedTimer = 0;
 			p->destroy();
 			}
@@ -478,12 +478,12 @@ void Game::update()
 
 		for (auto& c : colliders)
 	{
-		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+		// SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
 		// if (Collision::AABB1(playerCol, cCol))
 		// {
 		// 	player.getComponent<TransformComponent>().position.x = playerPos.x;
 		// }
-		if (Collision::AABB(playerCol, cCol))
+		if (Collision::AABB(playerCol, c->getComponent<ColliderComponent>().collider))
 		{
 			player.getComponent<TransformComponent>().position = playerPos;
 			//std::cout << "width: " << playerCol.w << "  height: " << playerCol.h << std::endl;

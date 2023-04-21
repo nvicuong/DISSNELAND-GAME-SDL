@@ -50,7 +50,8 @@ public:
 		groupPlayers,
 		groupColliders,
 		groupProjectiles,
-		groupEnemy
+		groupEnemy,
+		groupItem
 	};
 
 private:

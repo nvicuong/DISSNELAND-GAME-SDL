@@ -3,7 +3,6 @@
 #include "ECS.h"
 #include "Components.h"
 #include "Vector2D.h"
-#include "ColliderComponent.h"
 #include <string>
 
 class StatusBar : public Component

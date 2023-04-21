@@ -4,7 +4,6 @@
 #include "Collision.h"
 #include "AssetManager.h"
 #include "Define.h"
-#include "ColliderComponent.h"
 #include <cmath>
 
 class Enemy1 : public Component

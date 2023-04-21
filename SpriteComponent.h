@@ -11,14 +11,15 @@ class SpriteComponent : public Component
 {
 private:
 	TransformComponent* transform;
-	SDL_Texture* texture;
 	SDL_Rect srcRect, destRect;
-
-	int speed = 100;
+	SDL_Texture* texture;
 	int width = 32;
 	int height = 32;
+	int speed = 100;
 
 public:
+	std::string tag;
+	SDL_Rect posRect;
 	int frames = 0;
 	int timer = 0;
 	Uint32 periodTime = 0;
@@ -40,7 +41,7 @@ public:
 
 	SpriteComponent(std::string id, Animation idArray[], int sizeidArray)
 	{
-
+		tag = id;
 		
 
 		for (int i = 0; i < sizeidArray; ++i)
@@ -74,6 +75,7 @@ public:
 		srcRect.x = srcRect.y = 0;
 		srcRect.w = width;
 		srcRect.h = height;
+		posRect = {static_cast<int>(transform->position.x), static_cast<int>(transform->position.y), width, height};
 
 	}
 
@@ -120,6 +122,11 @@ public:
 		destRect.w = width * transform->scale;
 		destRect.h = transform->height * transform->scale;
 		
+
+		posRect.x = static_cast<int>(transform->position.x);
+		posRect.y = static_cast<int>(transform->position.y);
+		posRect.w = width * transform->scale;
+		posRect.h = transform->height * transform->scale;
 
 	}
 
