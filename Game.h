@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 #include "Define.h"
+#include <ctime>
+#include <cmath>
 // #include "Menu.h"
 
 

@@ -50,6 +50,15 @@ void AssetManager::CreateBoss(Vector2D pos, int width, int height, std::string i
 	collider.addGroup(Game::groupEnemy);
 }
 
+void AssetManager::CreateThuoc(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray, int f)
+{
+	auto& item(manager->addEntity());
+	item.addComponent<TransformComponent>(pos.x, pos.y, width, height, 1);
+	item.addComponent<SpriteComponent>(id, idArray, sizeidArray);
+	item.addComponent<Item>(f);
+	item.addGroup(Game::groupItem);
+}
+
 void AssetManager::AddVector(std::string id)
 {
 	std::vector< SDL_Texture*> animationEntity;

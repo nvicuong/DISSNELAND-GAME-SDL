@@ -35,8 +35,6 @@ public:
 		{
 			float newXposProj = recP.x + (recP.w / 2);
 			float newYposProj = recP.y + (recP.h / 2);
-
-
 			transform->position.x = transform->position.x + (newXposProj - transform->position.x) * FOLLOW_PLAYER;
 			transform->position.y = transform->position.y + (newXposProj - transform->position.y) * FOLLOW_PLAYER;
 

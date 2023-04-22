@@ -149,6 +149,13 @@ Animation aniProject[] =
 };
 int sizeaniProject = 2;
 
+
+Animation aniItem[] = {
+	Animation(1, 100, 16, 16),
+	Animation(1, 100, 16, 16)
+};
+int sizeItem = 2;
+
 bool flip = 0;
 void Enemy1::walkAround()
 {
@@ -258,6 +265,15 @@ void Enemy1::fireGun(const SDL_Rect& eneRect, const SDL_Rect& recP, AssetManager
     }
 
     }
+}
+
+void Enemy1::dropDrug(AssetManager* assets, int f)
+{
+    float posX = transform->position.x;
+    float posY = transform->position.y;
+    float posW = sprite->posRect.w;
+    float posH = sprite->posRect.h;
+    assets->CreateThuoc(Vector2D(posX + (posW/2), posY + (posH/2)), 16, 16, "item", aniItem, sizeItem, f);
 }
 
 void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)

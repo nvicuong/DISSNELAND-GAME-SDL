@@ -15,6 +15,9 @@ public:
 	double hurtedTimer = 0;
 	double periodTime = 0;
 
+	//thoi gian tac dung cua thuoc vuong liem
+	double vuongLiemTimer = 0;
+
 	//kiem tra qua trinh slide
 	bool slide;
 	double slideTimer = 1;
@@ -28,6 +31,7 @@ public:
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		sprite = &entity->getComponent<SpriteComponent>();
+		vuongLiemTimer = 10;
 		hurtedTimer = 1;
 		periodTime = SDL_GetTicks() / 1000;
 		slide = 0;

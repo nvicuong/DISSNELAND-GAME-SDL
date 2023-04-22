@@ -9,4 +9,5 @@
 #include "Enemy1.h"
 #include "StatusComponent.h"
 #include "FontLabel.h"
+#include "ItemComponent.h"
 

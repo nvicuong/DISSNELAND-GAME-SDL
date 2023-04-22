@@ -20,6 +20,8 @@ public:
 	//bien kiem tra xem enemy co bi gay sat thuong khong
 	double hurtedTimer = 0;
 	bool checkHurted = 0;
+	//bo sat thuong
+	int unHurted;
 	//SDL_Rect* eneRect;
 	Enemy1(int sp, std::string t, float x, float y) : speed(sp), tag(t), constX(x), constY(y)
 	{}
@@ -35,6 +37,7 @@ public:
 		periodTime = SDL_GetTicks()/1000;
 		timer = 5;
 		hurtedTimer = 2;
+		unHurted = 0;
 		hit = 0;
 		checkHurted = 0;
 		attacked = 0;
@@ -47,20 +50,13 @@ public:
 
 	void update() override
 	{
-		if (tag == "enemy1")
-		{
-			walkAround();
-		}
-		if (tag == "enemy2")
-		{
-
-		}
 	}
 
 	Vector2D getVel(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void walkAround();
 	bool completedAttack();
 	void fireGun(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets, bool f);
+	void dropDrug(AssetManager* assets, int f);
 	bool huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void getHurt();

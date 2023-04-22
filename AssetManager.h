@@ -21,6 +21,7 @@ public:
 	void CreateEnemy1(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray);
 	void CreateEnemy2(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray);
 	void CreateBoss(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray);
+	void CreateThuoc(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray, int f);
 
 	//texture management
 	void AddVector(std::string id);
