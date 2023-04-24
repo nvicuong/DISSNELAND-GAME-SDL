@@ -17,7 +17,7 @@ public:
 
 	//gameObjects
 
-	void CreateProJectile(Vector2D pos, Vector2D vel, int width, int height, int range, int speed, bool f, std::string id, int index, Animation idArray[], int sizeidArray);
+	void CreateProJectile(Vector2D pos, Vector2D vel, int width, int height, int range, int speed, std::string id, int index, Animation idArray[], int sizeidArray);
 	void CreateEnemy1(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray);
 	void CreateEnemy2(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray);
 	void CreateBoss(Vector2D pos, int width, int height, std::string id, Animation idArray[], int sizeidArray);

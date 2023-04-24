@@ -12,6 +12,7 @@ TTF_Font* fontTitle = NULL;
 
 std::vector<FontLabel> managerMenu;
 std::vector<FontLabel> managerGameOver;
+std::vector<FontLabel> managerGameWin;
 std::vector<FontLabel> managerPause;
 
 void Menu::init()
@@ -67,6 +68,13 @@ void Menu::init()
     managerGameOver.push_back(gameover);
     managerGameOver.push_back(returntomenu);
     managerGameOver.push_back(quitOver);
+
+    FontLabel gameWin(385, 200, "YOU WIN!");
+    gameWin.setColor(FontLabel::PINK_TEXT);
+    
+    managerGameWin.push_back(gameWin);
+    managerGameWin.push_back(returntomenu);
+    managerGameWin.push_back(quitOver);
 
     FontLabel pause(430, 150, "PAUSE");
     FontLabel continueGame(425, 250, "CONTINUE");

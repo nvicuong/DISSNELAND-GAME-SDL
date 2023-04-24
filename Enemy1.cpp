@@ -244,26 +244,25 @@ Vector2D Enemy1::getVel(const SDL_Rect& eneRect, const SDL_Rect& recP)
     return Vector2D(idX, idY);
 }
 
-void Enemy1::fireGun(const SDL_Rect& eneRect, const SDL_Rect& recP, AssetManager* assets, bool f)
+void Enemy1::fireGun(const SDL_Rect& eneRect, const SDL_Rect& recP, AssetManager* assets)
 {
-    if (f)
-    {       
-            float posX = transform->position.x;
-            float posY = transform->position.y;
-            Vector2D vel(0, 0);
-            assets->CreateProJectile(Vector2D(posX, posY), vel, 10, 10, 200, 2, f, "projectile", 0, aniProject, sizeaniProject);
-    }
-    else
-    {
     if (Collision::findAABB(eneRect, recP))
     {
         float posX = transform->position.x;
         float posY = transform->position.y;
         Vector2D getV = Enemy1::getVel(eneRect, recP);
-        assets->CreateProJectile(Vector2D(posX, posY), getV, 10, 10, 200, 2, f, "projectile", 0, aniProject, sizeaniProject);
+        assets->CreateProJectile(Vector2D(posX, posY), getV, 10, 10, 200, 2, "projectile", 0, aniProject, sizeaniProject);
 
     }
+}
 
+void Enemy1::fireGunCircle(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets)
+{
+    double x = 0;
+    while (x < 2*3.14)
+    {
+        assets->CreateProJectile(Vector2D(transform->position.x, transform->position.y), Vector2D(cos(x), sin(x)), 10, 10, 200, 2, "projectile", 0, aniProject, sizeaniProject);
+        x += 0.3;
     }
 }
 

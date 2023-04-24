@@ -11,12 +11,12 @@ AssetManager::~AssetManager()
 
 }
 
-void AssetManager::CreateProJectile(Vector2D pos, Vector2D vel, int width, int height, int range, int speed, bool f, std::string id, int index, Animation idArray[], int sizeidArray)
+void AssetManager::CreateProJectile(Vector2D pos, Vector2D vel, int width, int height, int range, int speed, std::string id, int index, Animation idArray[], int sizeidArray)
 {
 	auto& projectile(manager->addEntity());
 	projectile.addComponent<TransformComponent>(pos.x, pos.y, width, height, 1);
 	projectile.addComponent<SpriteComponent>(id, idArray, sizeidArray);
-	projectile.addComponent<ProjectileComponent>(range, speed, vel, f);
+	projectile.addComponent<ProjectileComponent>(range, speed, vel);
 	projectile.addGroup(Game::groupProjectiles);
 }
 

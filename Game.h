@@ -25,6 +25,7 @@ public:
 	static int enemyRemnants;
 	static double periodTimeGame;
 	SDL_Texture* barText;
+	SDL_Texture* giangHoaText;
 	Game();
 	~Game();
 

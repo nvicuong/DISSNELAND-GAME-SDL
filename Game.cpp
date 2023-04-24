@@ -88,6 +88,7 @@ auto& player(manager.addEntity());
 
 FontLabel timeGame(MAX_WIDTH_SCREEN - 100, 20, "TIME");
 FontLabel enemyRemain(MAX_WIDTH_SCREEN - 300, 20, "REMAINING MONSTERS");
+FontLabel giangHoa(200, 20, "PRESS E TO GIANG HOA");
 FontLabel thuocKimCuong(MAX_WIDTH_SCREEN - 300, 50, "ABSORB THUOC KIM CUONG");
 FontLabel thuocVuongLiem(MAX_WIDTH_SCREEN - 300, 80, "ABSORB THUOC VUONG LIEM");
 
@@ -146,6 +147,9 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 	enemyRemain.SetlabelText(font);
 	enemyRemain.setColor(FontLabel::WHITE_TEXT);
+
+	giangHoa.SetlabelText(font);
+	giangHoa.setColor(FontLabel::PINK_TEXT);
 
 	thuocKimCuong.SetlabelText(font);
 	thuocKimCuong.setColor(FontLabel::WHITE_TEXT);
@@ -247,6 +251,9 @@ auto& projectiles(manager.getGroup(Game::groupProjectiles));
 auto& enemies(manager.getGroup(Game::groupEnemy));
 
 auto& items(manager.getGroup(Game::groupItem));
+double giangHoaTime = 0;
+bool checkGiangHoa = 0;
+bool checkPossibleGiangHoa = 0;
 void Game::handleEvents()
 {
 
@@ -260,7 +267,16 @@ void Game::handleEvents()
             isRunningMenu = 1;
 			openMenu = 2;
         }
-        break;
+	if (event.key.keysym.sym == SDLK_e)
+	{
+		if (checkPossibleGiangHoa)
+		{
+			checkGiangHoa = 1;
+			giangHoaTime = 0;
+			std::cout << "gianghoa" << std::endl;
+		}
+	}
+	break;
 	case SDL_QUIT:
 	isRunning = 0;
 	break;
@@ -276,6 +292,7 @@ void Game::handleEvents()
 double Game::periodTimeGame = SDL_GetTicks()/1000;
 //double periodTime2 = SDL_GetTicks()/1000;
 double countTimeGame = 0;
+double nextMaPtime = 0;
 int fired = 0;
 
 bool checkThuocKimCuong = 0;
@@ -284,7 +301,12 @@ void Game::update()
 {
 
 	srand(time(NULL));
-	countTimeGame += deltaTime(periodTimeGame);
+
+	double delta = deltaTime(periodTimeGame);
+
+	countTimeGame += delta;
+	nextMaPtime += delta;
+	giangHoaTime += delta;
 
 	if (static_cast<int>(countTimeGame) % 10 == 0)
 	{
@@ -292,6 +314,14 @@ void Game::update()
 		checkThuocVuongLiem = 0;
 	}
 	
+	if (mapCurrent == 2 && player.getComponent<StatusBar>().health <= 100)
+	{
+		checkPossibleGiangHoa = 1;
+	}
+	else
+	{
+		checkPossibleGiangHoa = 0;
+	}
 
 	SDL_Rect playerCol = player.getComponent<SpriteComponent>().posRect;
 	// SDL_Rect playerCol = {player.getComponent<TransformComponent>().position.x, player.getComponent<TransformComponent>().position.y, player.getComponent<TransformComponent>().width, player.getComponent<TransformComponent>().height};
@@ -319,7 +349,7 @@ void Game::update()
 	manager.refresh();
 	manager.update();
 
-	if (enemyRemnants == 0)
+	if (enemyRemnants == 0 && nextMaPtime >= 5)
 	{
 		Game::resetGame = 1;
 		Game::mapCurrent = 2;
@@ -344,8 +374,12 @@ void Game::update()
 			{
 				if (e->getComponent<SpriteComponent>().stillDead == 0)
 				{
+				int ranDrop = rand() % (1 - 0 + 1) + 0;
+				if (ranDrop)
+				{
 				int ran = rand() % (1 - 0 + 1) + 0;
 				e->getComponent<Enemy1>().dropDrug(assets, ran);
+				}
 				}
 				e->getComponent<SpriteComponent>().index = 4;
 				e->getComponent<SpriteComponent>().stillDead = 1;
@@ -354,8 +388,11 @@ void Game::update()
 				if (e->getComponent<Enemy1>().hurtedTimer >= 1)
 				{
 				e->destroy();
-				
 				enemyRemnants -= 1;
+				if (enemyRemnants == 0)
+				{
+					nextMaPtime = 0;
+				}
 				}
 			}
 			else
@@ -381,7 +418,7 @@ void Game::update()
 			{
 				if (e->getComponent<Enemy1>().timer > 2)
 				{
-					e->getComponent<Enemy1>().fireGun(e->getComponent<SpriteComponent>().posRect, playerCol, assets, 0);
+					e->getComponent<Enemy1>().fireGun(e->getComponent<SpriteComponent>().posRect, playerCol, assets);
 					e->getComponent<Enemy1>().timer = 0;
 				}
 			}
@@ -422,9 +459,9 @@ void Game::update()
 				//std::cout << "timer2: " << timer2 << std::endl;
 
 				int timeFireGun = static_cast<int>(e->getComponent<Enemy1>().timer);
-				if (timeFireGun % 10 == 0 && fired != timeFireGun)
+				if (timeFireGun % 10 == 0 && fired != timeFireGun && timeFireGun != 0)
 				{
-					e->getComponent<Enemy1>().fireGun(e->getComponent<SpriteComponent>().posRect, playerCol, assets, 1);
+					e->getComponent<Enemy1>().fireGunCircle(e->getComponent<SpriteComponent>().posRect, playerCol, assets);
 					fired = timeFireGun;
 				}
 
@@ -494,7 +531,6 @@ void Game::update()
 	{
 		//std::cout << projectiles.size() << " ";
 		auto& p = projectiles[i];
-		p->getComponent<ProjectileComponent>().follow(playerCol);
 		if (Collision::AABB(player.getComponent<SpriteComponent>().posRect, p->getComponent<SpriteComponent>().posRect))
 		{
 			if (player.getComponent<SpriteComponent>().index != 5)
@@ -528,6 +564,13 @@ void Game::update()
 		{
 			player.getComponent<TransformComponent>().position = playerPos;
 			//std::cout << "width: " << playerCol.w << "  height: " << playerCol.h << std::endl;
+		}
+		for (auto& p : projectiles)
+		{
+			if (Collision::AABB(p->getComponent<SpriteComponent>().posRect, c->getComponent<ColliderComponent>().collider))
+		{
+			p->destroy();
+		}
 		}
 	}
 
@@ -592,6 +635,22 @@ void Game::render()
 {
 	SDL_RenderClear(renderer);
 
+	if (checkGiangHoa)
+	{
+		SDL_DestroyTexture(barText);
+		barText = NULL;
+		barText = TextureManager::LoadTexture("assets/giangHoa.png");
+		SDL_RenderCopy(renderer, barText, NULL, NULL);
+		if (giangHoaTime >= 5)
+		{
+			countTimeGame = 0;
+			isRunningMenu = 1;
+			openMenu = 0;
+		}
+		std::cout << "dang giang hoa" << std::endl;
+	}
+	else
+	{
 	SDL_DestroyTexture(barText);
 	barText = NULL;
 	
@@ -635,10 +694,15 @@ void Game::render()
 	player.getComponent<StatusBar>().draw();
 	timeGame.draw();
 	enemyRemain.draw();
+	if (checkPossibleGiangHoa)
+	{
+		giangHoa.draw();
+	}
 	if (checkThuocKimCuong)
 	{ thuocKimCuong.draw(); }
 	if (checkThuocVuongLiem)
 	{ thuocVuongLiem.draw(); }
+	}
 	SDL_RenderPresent(renderer);
 }
 
@@ -652,31 +716,20 @@ void Game::clean()
 void Game::initObject1()
 {
 
-	for (auto e : enemies)
-	{
-		e->destroy();
-	}
-
+	// for (auto e : enemies)
+	// {
+	// 	e->destroy();
+	// }
+	enemies.clear();
 	tiles.clear();
 	building.clear();
 	colliders.clear();
+	items.clear();
 
-	// for (auto t : tiles)
+	// for (auto i : items)
 	// {
-	// 	t->destroy();
+	// 	i->destroy();
 	// }
-
-	// for (auto b : building)
-	// {
-	// 	b->destroy();
-	// }
-
-	// for (auto c : colliders)
-	// {
-	// 	c->destroy();
-	// }
-
-	// manager.refresh();
 
 	map->LoadMap("assets/tilemap_1.map", 50, 20);
 
@@ -706,32 +759,22 @@ void Game::initObject1()
 void Game::initObject2()
 {
 
-	for (auto e : enemies)
-	{
-		e->destroy();
-	}
+	// for (auto e : enemies)
+	// {
+	// 	e->destroy();
+	// }
 
+	enemies.clear();
 	tiles.clear();
-
-	// for (auto t : tiles)
-	// {
-	// 	t->destroy();
-	// }
-
 	building.clear();
-
-	// for (auto b : building)
-	// {
-	// 	b->destroy();
-	// }
-
 	colliders.clear();
-	// for (auto c : colliders)
+	items.clear();
+
+	// for (auto i : items)
 	// {
-	// 	c->destroy();
+	// 	i->destroy();
 	// }
 
-	// manager.refresh();
 
 	map->LoadMap("assets/tilemap_2.map", 50, 20);
 

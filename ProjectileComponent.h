@@ -4,11 +4,11 @@
 #include "Components.h"
 #include "Vector2D.h"
 
+class Enemy1;
 class ProjectileComponent : public Component
 {
 public:
-	bool followPlayer;
-	ProjectileComponent(int rng, int sp, Vector2D vel, bool f) : range(rng), speed(sp), velocity(vel), followPlayer(f)
+	ProjectileComponent(int rng, int sp, Vector2D vel) : range(rng), speed(sp), velocity(vel)
 	{}
 	~ProjectileComponent() {};
 
@@ -26,18 +26,6 @@ public:
 		if (distance > 1000)
 		{
 			entity->destroy();
-		}
-	}
-
-	void follow(const SDL_Rect& recP)
-	{
-		if (followPlayer)
-		{
-			float newXposProj = recP.x + (recP.w / 2);
-			float newYposProj = recP.y + (recP.h / 2);
-			transform->position.x = transform->position.x + (newXposProj - transform->position.x) * FOLLOW_PLAYER;
-			transform->position.y = transform->position.y + (newXposProj - transform->position.y) * FOLLOW_PLAYER;
-
 		}
 	}
 

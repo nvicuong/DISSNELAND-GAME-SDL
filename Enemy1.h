@@ -41,7 +41,14 @@ public:
 		hit = 0;
 		checkHurted = 0;
 		attacked = 0;
-		transform->velocity.x = 0;
+		if (tag == "enemy1")
+		{
+			transform->velocity.x = 1;
+		}
+		else
+		{
+			transform->velocity.x = 0;
+		}
 		transform->velocity.y = 0;
 		transform->speed = 1;
 		sprite->Play(tag);
@@ -55,7 +62,8 @@ public:
 	Vector2D getVel(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void walkAround();
 	bool completedAttack();
-	void fireGun(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets, bool f);
+	void fireGun(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets);
+	void fireGunCircle(const SDL_Rect &eneRect, const SDL_Rect& recP, AssetManager* assets);
 	void dropDrug(AssetManager* assets, int f);
 	bool huntPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
 	void attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP);
