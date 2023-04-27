@@ -71,6 +71,7 @@ void Menu::init()
 
     FontLabel gameWin(385, 200, "YOU WIN!");
     gameWin.setColor(FontLabel::PINK_TEXT);
+    gameWin.SetlabelText(fontTitle);
     
     managerGameWin.push_back(gameWin);
     managerGameWin.push_back(returntomenu);
@@ -140,7 +141,7 @@ bool Menu::handleEvents()
                 managerGameOver[i].SetlabelText(fontMenu);
             }
         }
-        else
+        else if (Game::openMenu == 2)
         {
             for (int i = 1; i < managerPause.size(); i++)
             {
@@ -154,6 +155,22 @@ bool Menu::handleEvents()
                     managerPause[i].setColor(FontLabel::WHITE_TEXT);
                 }
                 managerPause[i].SetlabelText(fontMenu);
+            }
+        }
+        else
+        {
+            for (int i = 1; i < managerGameOver.size(); i++)
+            {
+                managerGameWin[i].destroy();
+                if (managerGameWin[i].checkMotion(event.motion.x, event.motion.y))
+                {
+                    managerGameWin[i].setColor(FontLabel::RED_TEXT);
+                }
+                else
+                {
+                    managerGameWin[i].setColor(FontLabel::WHITE_TEXT);
+                }
+                managerGameWin[i].SetlabelText(fontMenu);
             }
         }
         break;
@@ -184,7 +201,7 @@ bool Menu::handleEvents()
                 Game::isRunning = 0;
             }
         }
-        else
+        else if (Game::openMenu == 2)
         {
             if (managerPause[1].checkMotion(event.motion.x, event.motion.y))
             {
@@ -196,6 +213,17 @@ bool Menu::handleEvents()
                 Game::openMenu = 1;
             }
             if (managerPause[3].checkMotion(event.motion.x, event.motion.y))
+            {
+                Game::isRunning = 0;
+            }
+        }
+        else
+        {
+            if (managerGameWin[1].checkMotion(event.motion.x, event.motion.y))
+            {
+                Game::openMenu = 1;
+            }
+            if (managerGameWin[2].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::isRunning = 0;
             }
@@ -234,9 +262,16 @@ void Menu::render()
             i.draw();
         }
     }
-    else
+    else if (Game::openMenu == 2)
     {
         for (auto i : managerPause)
+        {
+            i.draw();
+        }
+    }
+    else 
+    {
+        for (auto i : managerGameWin)
         {
             i.draw();
         }

@@ -148,8 +148,8 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	enemyRemain.SetlabelText(font);
 	enemyRemain.setColor(FontLabel::WHITE_TEXT);
 
-	giangHoa.SetlabelText(font);
 	giangHoa.setColor(FontLabel::PINK_TEXT);
+	giangHoa.SetlabelText(font);
 
 	thuocKimCuong.SetlabelText(font);
 	thuocKimCuong.setColor(FontLabel::WHITE_TEXT);
@@ -314,7 +314,7 @@ void Game::update()
 		checkThuocVuongLiem = 0;
 	}
 	
-	if (mapCurrent == 2 && player.getComponent<StatusBar>().health <= 100)
+	if (mapCurrent == 2 && player.getComponent<StatusBar>().health <= 50)
 	{
 		checkPossibleGiangHoa = 1;
 	}
@@ -503,6 +503,8 @@ void Game::update()
 			if ((player.getComponent<SpriteComponent>().index == 3) &&
 				player.getComponent<KeyboardController>().hit == 1)
 			{
+				if (s != "boss")
+				{
 				if (player.getComponent<KeyboardController>().vuongLiemTimer < 10)
 				{
 					e->getComponent<StatusBar>().health -= 20;
@@ -510,6 +512,7 @@ void Game::update()
 				else
 				{
 					e->getComponent<StatusBar>().health -= 10;
+				}
 				}
 				if (e->getComponent<Enemy1>().unHurted == 0)
 				{
@@ -641,11 +644,13 @@ void Game::render()
 		barText = NULL;
 		barText = TextureManager::LoadTexture("assets/giangHoa.png");
 		SDL_RenderCopy(renderer, barText, NULL, NULL);
-		if (giangHoaTime >= 5)
+		if (giangHoaTime >= 10)
 		{
 			countTimeGame = 0;
 			isRunningMenu = 1;
-			openMenu = 0;
+			openMenu = 3;
+			SDL_DestroyTexture(barText);
+			barText = NULL;
 		}
 		std::cout << "dang giang hoa" << std::endl;
 	}
@@ -720,6 +725,9 @@ void Game::initObject1()
 	// {
 	// 	e->destroy();
 	// }
+	giangHoaTime = 0;
+	checkGiangHoa = 0;
+	checkPossibleGiangHoa = 0;
 	enemies.clear();
 	tiles.clear();
 	building.clear();
@@ -763,7 +771,9 @@ void Game::initObject2()
 	// {
 	// 	e->destroy();
 	// }
-
+	giangHoaTime = 0;
+	checkGiangHoa = 0;
+	checkPossibleGiangHoa = 0;
 	enemies.clear();
 	tiles.clear();
 	building.clear();
