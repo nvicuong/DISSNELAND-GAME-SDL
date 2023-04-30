@@ -108,6 +108,7 @@ public:
 				transform->velocity.y = -1;
 				sprite->index = 1;
 				sprite->Play("player");
+				
 				break;
 			case SDLK_a:
 				//std::cout << "A" << std::endl;
@@ -115,17 +116,20 @@ public:
 				sprite->index = 1;
 				sprite->Play("player");
 				sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
+				
 				break;
 			case SDLK_d:
 				transform->velocity.x = 1;
 				sprite->index = 1;
 				sprite->spriteFlip = SDL_FLIP_NONE;
 				sprite->Play("player");
+				
 				break;
 			case SDLK_s:
 				transform->velocity.y = 1;
 				sprite->index = 1;
 				sprite->Play("player");
+			
 				break;
 			case SDLK_j:
 				if (unKey == 1)
@@ -188,6 +192,7 @@ public:
 				if (transform->velocity.x != 0 || transform->velocity.y != 0)
 				{
 					sprite->index = 1;
+				
 				}
 				else { sprite->index = 0; }
 				sprite->Play("player");
@@ -197,6 +202,7 @@ public:
 				if (transform->velocity.x != 0 || transform->velocity.y != 0)
 				{
 					sprite->index = 1;
+					
 				}
 				else { sprite->index = 0; }
 				transform->velocity.x = 0;
@@ -207,6 +213,7 @@ public:
 				if (transform->velocity.x != 0 || transform->velocity.y != 0)
 				{
 					sprite->index = 1;
+					
 				}
 				else { sprite->index = 0; }
 				transform->velocity.x = 0;
@@ -219,6 +226,7 @@ public:
 				if (transform->velocity.x != 0 || transform->velocity.y != 0)
 				{
 					sprite->index = 1;
+					
 				}
 				else { sprite->index = 0; }
 				sprite->Play("player");
@@ -235,6 +243,7 @@ public:
 				if (transform->velocity.x != 0 || transform->velocity.y != 0)
 				{
 					sprite->index = 1;
+					
 				}
 				else { sprite->index = 0; }
 				sprite->Play("player");

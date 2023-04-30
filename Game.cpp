@@ -27,6 +27,9 @@ int Game::enemyRemnants = 0;
 SDL_Rect destBarText = {0, 0, 1000, 100};
 SDL_Rect Game::camera = { 0, 0, MAX_WIDTH_SCREEN, MAX_HEIGHT_SCREEN };
 
+Mix_Chunk* Game::soundEffects[7];
+Mix_Music* Game::soundBackground = NULL;
+
 AssetManager* Game::assets = new AssetManager(&manager);
 
 /*[0]IDLE, [1]WALK, [2]HURT, [3]ATTACK, [4]DEAD, [5]SLIDE*/
@@ -134,6 +137,33 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		isRunning = true;
 	}
 
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+	{
+		std::cout << "loi am thanh" << std::endl;
+	}
+
+	soundEffects[0] = Mix_LoadWAV("audio/walk.wav");
+	soundEffects[1] = Mix_LoadWAV("audio/attack.wav");
+	soundEffects[2] = Mix_LoadWAV("audio/fireGun.wav");
+	soundEffects[3] = Mix_LoadWAV("audio/hurt.wav");
+	soundEffects[4] = Mix_LoadWAV("audio/death.wav");
+	soundEffects[5] = Mix_LoadWAV("audio/attackBoss.wav");
+	soundEffects[6] = Mix_LoadWAV("audio/attackMiss.wav");
+
+	soundBackground = Mix_LoadMUS("audio/background.mp3");
+	
+	Mix_Volume(-1, MIX_MAX_VOLUME);
+	Mix_VolumeMusic(50);
+
+	if(Mix_PlayingMusic()==0)
+		{
+			Mix_PlayMusic(soundBackground,-1);
+			// Mix_PlayChannel(-1, Game::soundEffects[1], 0);
+		} 
+  		else{
+    		if(Mix_PausedMusic()==1) Mix_ResumeMusic();
+    		else Mix_PauseMusic();
+		}
 
 	if (TTF_Init() == -1)
 	{
@@ -374,6 +404,7 @@ void Game::update()
 			{
 				if (e->getComponent<SpriteComponent>().stillDead == 0)
 				{
+				Mix_PlayChannel(-1, Game::soundEffects[4], 0);
 				int ranDrop = rand() % (1 - 0 + 1) + 0;
 				if (ranDrop)
 				{
@@ -419,6 +450,7 @@ void Game::update()
 				if (e->getComponent<Enemy1>().timer > 2)
 				{
 					e->getComponent<Enemy1>().fireGun(e->getComponent<SpriteComponent>().posRect, playerCol, assets);
+					Mix_PlayChannel(-1, Game::soundEffects[2], 0);
 					e->getComponent<Enemy1>().timer = 0;
 				}
 			}
@@ -433,7 +465,8 @@ void Game::update()
 				if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked && player.getComponent<SpriteComponent>().index != 5)
 				{
 					// std::cout << "dam trung" << std::endl;
-					
+					Mix_PlayChannel(-1, Game::soundEffects[1], 0);
+					Mix_PlayChannel(-1, Game::soundEffects[3], 0);
 					player.getComponent<StatusBar>().health -= 10;
 					player.getComponent<KeyboardController>().hurtedTimer = 0;
 					e->getComponent<Enemy1>().hit = 0;
@@ -447,6 +480,11 @@ void Game::update()
 				}
 				else
 				{
+					if (e->getComponent<Enemy1>().completedAttack())
+					{
+						Mix_PlayChannel(-1, Game::soundEffects[6], 0);
+						std::cout << "ddd";
+					}
 					e->getComponent<Enemy1>().timer += deltaTime(e->getComponent<Enemy1>().periodTime);
 					
 				}
@@ -462,6 +500,7 @@ void Game::update()
 				if (timeFireGun % 10 == 0 && fired != timeFireGun && timeFireGun != 0)
 				{
 					e->getComponent<Enemy1>().fireGunCircle(e->getComponent<SpriteComponent>().posRect, playerCol, assets);
+					Mix_PlayChannel(-1, Game::soundEffects[2], 0);
 					fired = timeFireGun;
 				}
 
@@ -470,7 +509,8 @@ void Game::update()
 				if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked && player.getComponent<SpriteComponent>().index != 5)
 				{
 					// std::cout << "dam trung" << std::endl;
-					
+					Mix_PlayChannel(-1, Game::soundEffects[5], 0);
+					Mix_PlayChannel(-1, Game::soundEffects[3], 0);
 					player.getComponent<StatusBar>().health -= 10;
 					player.getComponent<KeyboardController>().hurtedTimer = 0;
 					e->getComponent<Enemy1>().hit = 0;
@@ -484,6 +524,11 @@ void Game::update()
 				}
 				else
 				{
+					if (e->getComponent<Enemy1>().hit && e->getComponent<Enemy1>().attacked)
+					{
+						Mix_PlayChannel(-1, Game::soundEffects[6], 0);
+						std::cout << "ddd";
+					}
 					e->getComponent<Enemy1>().timer += deltaTime(e->getComponent<Enemy1>().periodTime);
 				}
 			}
@@ -503,6 +548,7 @@ void Game::update()
 			if ((player.getComponent<SpriteComponent>().index == 3) &&
 				player.getComponent<KeyboardController>().hit == 1)
 			{
+				Mix_PlayChannel(-1, Game::soundEffects[1], 0);
 				if (s != "boss")
 				{
 				if (player.getComponent<KeyboardController>().vuongLiemTimer < 10)
@@ -539,6 +585,7 @@ void Game::update()
 			if (player.getComponent<SpriteComponent>().index != 5)
 			{
 			player.getComponent<StatusBar>().getDamage(player.getComponent<SpriteComponent>().posRect, p->getComponent<SpriteComponent>().posRect);
+			Mix_PlayChannel(-1, Game::soundEffects[3], 0);
 			player.getComponent<KeyboardController>().hurtedTimer = 0;
 			p->destroy();
 			}
