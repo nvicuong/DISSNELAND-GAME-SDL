@@ -50,6 +50,5 @@ private:
 	std::string labelText;
 	SDL_Texture* labelTexture;
 	SDL_Color textColor;
-	// std::string labelFont;
 
 };

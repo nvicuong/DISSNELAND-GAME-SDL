@@ -17,7 +17,6 @@ std::vector<FontLabel> managerPause;
 
 void Menu::init()
 {
-    // backgroundText = TextureManager::LoadTexture("assets/menu.png");
     if (TTF_Init() == -1)
     {
         std::cout << "Error : SDL_TTF" << std::endl;
@@ -28,7 +27,7 @@ void Menu::init()
     FontLabel dissneland(335, 130, "DISSNELAND");
     FontLabel start(430, 250, "START");
     FontLabel tutorial(405, 320, "TUTORIAL");
-    FontLabel setting(415, 390, "SETTING");
+    FontLabel setting(415, 390, "SOUND ON");
     FontLabel quit(440, 460, "QUIT");
 
     dissneland.setColor(FontLabel::PINK_TEXT);
@@ -72,7 +71,7 @@ void Menu::init()
     FontLabel gameWin(385, 200, "YOU WIN!");
     gameWin.setColor(FontLabel::PINK_TEXT);
     gameWin.SetlabelText(fontTitle);
-    
+
     managerGameWin.push_back(gameWin);
     managerGameWin.push_back(returntomenu);
     managerGameWin.push_back(quitOver);
@@ -91,7 +90,7 @@ void Menu::init()
     managerPause.push_back(returntomenu);
     managerPause.push_back(quitOver);
 
-    
+
 
 
 }
@@ -184,6 +183,36 @@ bool Menu::handleEvents()
                 Game::resetGame = 1;
                 Game::isRunningMenu = 0;
                 Game::mapCurrent = 1;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
+            }
+            if (managerMenu[2].checkMotion(event.motion.x, event.motion.y))
+            {
+                managerMenu[2].destroy();
+                managerMenu[2].SetlabelText(fontMenu);
+                managerMenu[2].SetText("READ README.md");
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
+            }
+            if (managerMenu[3].checkMotion(event.motion.x, event.motion.y))
+            {
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
+                if (Game::soundOn)
+                {
+                    Game::soundOn = 0;
+                    managerMenu[3].destroy();
+                    managerMenu[3].SetlabelText(fontMenu);
+                    managerMenu[3].SetText("SOUND OFF");
+                    Mix_Volume(-1, 0);
+                    Mix_VolumeMusic(0);
+                }
+                else
+                {
+                    Game::soundOn = 1;
+                    managerMenu[3].destroy();
+                    managerMenu[3].SetlabelText(fontMenu);
+                    managerMenu[3].SetText("SOUND ON");
+                    Mix_Volume(-1, MIX_MAX_VOLUME);
+                    Mix_VolumeMusic(50);
+                }
             }
             if (managerMenu[4].checkMotion(event.motion.x, event.motion.y))
             {
@@ -195,10 +224,12 @@ bool Menu::handleEvents()
             if (managerGameOver[1].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::openMenu = 1;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
             }
             if (managerGameOver[2].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::isRunning = 0;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
             }
         }
         else if (Game::openMenu == 2)
@@ -207,14 +238,17 @@ bool Menu::handleEvents()
             {
                 Game::periodTimeGame = SDL_GetTicks()/1000;
                 Game::isRunningMenu = 0;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
             }
             if (managerPause[2].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::openMenu = 1;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
             }
             if (managerPause[3].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::isRunning = 0;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
             }
         }
         else
@@ -222,10 +256,12 @@ bool Menu::handleEvents()
             if (managerGameWin[1].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::openMenu = 1;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
             }
             if (managerGameWin[2].checkMotion(event.motion.x, event.motion.y))
             {
                 Game::isRunning = 0;
+                Mix_PlayChannel(-1, Game::soundEffects[0], 0);
             }
         }
         break;
@@ -247,7 +283,7 @@ bool Menu::handleEvents()
 void Menu::render()
 {
     SDL_RenderClear(Game::renderer);
-	
+
     if (Game::openMenu == 1)
     {
         for (auto i : managerMenu)
@@ -269,7 +305,7 @@ void Menu::render()
             i.draw();
         }
     }
-    else 
+    else
     {
         for (auto i : managerGameWin)
         {

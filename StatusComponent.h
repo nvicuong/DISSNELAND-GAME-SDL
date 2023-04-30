@@ -36,13 +36,10 @@ public:
 
 		transform.position.x = entity->getComponent<TransformComponent>().position.x;
 		transform.position.y = entity->getComponent<TransformComponent>().position.y - 10;
-		//transform.width = 30;
-		//transform->height = height;
+		
 		srcRect.x = 0;
 		srcRect.y = 0;
 		srcRect.w = health/2;
-		//srcRect.h = height;
-		//std::cout << animIndex << std::endl;
 
 		if (s == "player")
 		{
@@ -54,8 +51,7 @@ public:
 		destRect.x = static_cast<int>(transform.position.x) - Game::camera.x;
 		destRect.y = static_cast<int>(transform.position.y) - Game::camera.y;
 		}
-		/*destRect.w = transform->width * transform->scale;
-		destRect.h = transform->height * transform->scale;*/
+	
 
 		if (s == "player")
 		{

@@ -27,7 +27,6 @@ public:
         if (x <= 2)
         {
             double delta = (x-1)*(x-1);
-            transform->position.x = xpos + 40*x;
             transform->position.y = ypos + 40*delta;
             x += 0.02;
         }

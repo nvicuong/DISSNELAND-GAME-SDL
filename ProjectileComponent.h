@@ -16,7 +16,6 @@ public:
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		transform->velocity = velocity;
-		//std::cout << transform->position << std::endl;
 	}
 
 	void update() override

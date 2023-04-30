@@ -15,10 +15,8 @@ FontLabel::FontLabel(int xpos, int ypos, std::string text) :
 	}
 bool FontLabel::SetlabelText(TTF_Font* font)
 	{
-        // std::cout << 5;
 		SDL_Surface* surf = TTF_RenderText_Solid(font, labelText.c_str(), textColor);
 		labelTexture = SDL_CreateTextureFromSurface(Game::renderer, surf);
-        // std::cout << (surf != NULL) ;
 		SDL_FreeSurface(surf);
 
 		SDL_QueryTexture(labelTexture, nullptr, nullptr, &position.w, &position.h);

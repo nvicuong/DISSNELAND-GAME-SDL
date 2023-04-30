@@ -49,6 +49,8 @@ public:
 	static Mix_Chunk* soundEffects[7];
 	static Mix_Music* soundBackground;
 
+	static bool soundOn;
+
 	enum groupLabels : std::size_t
 	{
 		groupMap,

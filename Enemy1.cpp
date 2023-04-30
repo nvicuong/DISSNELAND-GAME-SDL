@@ -66,9 +66,6 @@ void bfs(int sx, int sy, int ex, int ey, std::vector<std::vector<bool>>& visited
     {
         std::cout << p.first << " " << p.second <<std::endl;
     }
-    // std::cout << "sx: " << sx << " sy: " << sy << std::endl
-    //           << "ex: " << ex << " ey: " << ey << std::endl
-    //           << "-----------------" << std::endl;
 }
 
 bool Enemy1::huntPlayerVer2(const int x, const int y, const int w, const int h)
@@ -94,7 +91,6 @@ bool Enemy1::huntPlayerVer2(const int x, const int y, const int w, const int h)
         {
             int x = vec2D[ex][ey].front().first;
             int y = vec2D[ex][ey].front().second;
-            // std::cout << "no empty" << std::endl;
             if (tag == "boss")
             {
                 Vector2D velBoss(x, y);
@@ -116,13 +112,12 @@ bool Enemy1::huntPlayerVer2(const int x, const int y, const int w, const int h)
             xpos = transform->position.x;
             ypos = transform->position.y;
 
-    
+
             sprite->Play(tag);
             return true;
         }
         else
         {
-            // std::cout << "empty" << std::endl;
             Vector2D vel(0, 0);
             transform->velocity = vel;
             return false;
@@ -150,9 +145,10 @@ Animation aniProject[] =
 int sizeaniProject = 2;
 
 
-Animation aniItem[] = {
-	Animation(1, 100, 16, 16),
-	Animation(1, 100, 16, 16)
+Animation aniItem[] =
+{
+    Animation(1, 100, 16, 16),
+    Animation(1, 100, 16, 16)
 };
 int sizeItem = 2;
 
@@ -180,7 +176,6 @@ void Enemy1::walkAround()
 
 bool Enemy1::completedAttack()
 {
-    //std::cout << sprite->index << std::endl;
     if (tag == "boss")
     {
         if ((sprite->currentFrame >= 3) && sprite->index == 3)
@@ -191,14 +186,11 @@ bool Enemy1::completedAttack()
     }
     else
     {
-    if ((sprite->currentFrame >= sprite->frames - 1) && sprite->index == 3)
-    {
-        // std::cout << "currenFrame: " << sprite->currentFrame << std::endl;
-        // std::cout << "frames: " << sprite->frames << std::endl;
-        //std::cout << "..";
-        attacked = 1;
-        return true;
-    }
+        if ((sprite->currentFrame >= sprite->frames - 1) && sprite->index == 3)
+        {
+            attacked = 1;
+            return true;
+        }
     }
     return false;
 }
@@ -216,7 +208,6 @@ Vector2D Enemy1::getVel(const SDL_Rect& eneRect, const SDL_Rect& recP)
     float idX = 0;
     float idY = 0;
 
-    //viet phuong trinh duong thang
     float a = std::pow(recP.x + recP.w / 2 - gDesX, 2) + std::pow(recP.y + recP.h / 2 - gDesY, 2);
     for (auto i : desX)
     {
@@ -240,7 +231,6 @@ Vector2D Enemy1::getVel(const SDL_Rect& eneRect, const SDL_Rect& recP)
         idX *= 2;
         idY *= 2;
     }
-    //std::cout << "idX: " << idX << " idY: " << idY << std::endl;
     return Vector2D(idX, idY);
 }
 
@@ -279,7 +269,6 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
 {
     if (timer < 5)
     {
-        //std::cout << sprite->currentFrame << std::endl;
         if (eneRect.x % 48 == 0 && eneRect.y % 48 == 0)
         {
             transform->velocity = Vector2D(0, 0);
@@ -288,17 +277,13 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
         a = completedAttack();
         if (Collision::AABB(eneRect, recP) && a)
         {
-            //std::cout << "xx" << std::endl;
             hit = 1;
         }
         sprite->index = 3;
-        //std::cout << "attacked: " << attacked << std::endl;
         if (attacked)
         {
             sprite->index = 0;
-            //unAttack = 1;
         }
-        //std::cout << sprite->index << std::endl;
         sprite->Play(tag);
 
     }
@@ -308,7 +293,7 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
         {
             if (sprite->index != 4)
             {
-            sprite->index = 1;
+                sprite->index = 1;
             }
         }
         else
@@ -317,7 +302,6 @@ void Enemy1::attackPlayer(const SDL_Rect& eneRect, const SDL_Rect& recP)
         }
 
         attacked = 0;
-        //std::cout << "xx";
         if (Collision::findAABB(eneRect, recP))
         {
             huntPlayerVer2(recP.x, recP.y, recP.w, recP.h);
@@ -359,6 +343,5 @@ void Enemy1::getDeath()
 {
     sprite->index = 4;
     transform->velocity = Vector2D(0, 0);
-    // sprite->stillDead = 1;
     sprite->Play(tag);
 }

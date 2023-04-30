@@ -52,7 +52,6 @@ public:
 		transform->velocity.y = 0;
 		transform->speed = 1;
 		sprite->Play(tag);
-		//eneRect = &entity->getComponent<ColliderComponent>().collider;
 	}
 
 	void update() override

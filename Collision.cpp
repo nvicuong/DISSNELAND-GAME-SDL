@@ -20,7 +20,7 @@ bool Collision::findAABB(const SDL_Rect& recA, const SDL_Rect& recB)
 {
 	int disX = std::max(recB.x - recA.x, recB.x - recA.x - recA.w);
 	int disY = std::max(recB.y - recA.y, recB.y - recA.y - recA.h);
-	if (disX <= 600 && disY <= 600)
+	if (disX <= 400 && disY <= 400)
 	{
 		return true;
 	}
