@@ -1,6 +1,6 @@
 # DISSNELAND GAME
 Bài tập cuối học phần INT2215
-- Tên sinh viên: Nguyễn Việt Cương
+- Tên sinh viên: Nguyễn Việt Cường
 - Mã sinh viên: 22021211
 - Trường Đại học Công nghệ - ĐHQG Hà Nội
 
