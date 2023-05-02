@@ -535,7 +535,47 @@ void Game::update()
     {
         if (Collision::AABB(playerCol, c->getComponent<ColliderComponent>().collider))
         {
-            player.getComponent<TransformComponent>().position = playerPos;
+            int Px = (playerCol.y + 24) / 48;
+            int Py = (playerCol.x + 24) / 48;
+            int Cx = (c->getComponent<ColliderComponent>().collider.y + 24) / 48;
+            int Cy = (c->getComponent<ColliderComponent>().collider.x + 24) / 48;
+            Vector2D vel = player.getComponent<TransformComponent>().velocity;
+            if (Collision::colRight(Px, Py, Cx, Cy))
+            {
+             
+                std::cout << Cx << " " << Cy << std::endl;
+                if (vel.x > 0)
+                {
+                    player.getComponent<TransformComponent>().position.x = playerPos.x;
+                }
+            }
+            if (Collision::colLeft(Px, Py, Cx, Cy))
+            {
+                if (vel.x < 0)
+                {
+                 
+                    player.getComponent<TransformComponent>().position.x = playerPos.x;
+                }
+                
+            }
+            if (Collision::colUp(Px, Py, Cx, Cy))
+            {
+              
+                std::cout << Cx << " " << Cy << std::endl;
+                if (player.getComponent<TransformComponent>().velocity.y < 0)
+                {
+                    player.getComponent<TransformComponent>().position.y = playerPos.y;
+                }
+            }
+               
+            if (Collision::colDown(Px, Py, Cx, Cy))
+            {
+                
+                if (player.getComponent<TransformComponent>().velocity.y > 0)
+                {
+                    player.getComponent<TransformComponent>().position.y = playerPos.y;
+                }
+            }
         }
         for (auto& p : projectiles)
         {
