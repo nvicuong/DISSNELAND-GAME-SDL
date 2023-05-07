@@ -7,18 +7,19 @@ Bài tập cuối học phần INT2215
 ## Mô tả chung về trò chơi
 
 - game góc nhìn thứ 3 nhìn từ trên xuống, điều khiển nhân vật kiếm sĩ tiêu diệt hết quái để qua màn.
-
 - Sử dụng phím a s d w để di chuyển, j để chém, k để né đòn.
 
 - có 3 loại quái:
 	+ Flying eye: di chuyển trong vùng cố định, có khả năng bắn đạn.
 	+ Skeleton: dùng kiếm để chém, phạm vi hoạt động rộng, có khả năng săn lùng người chơi và tránh trường ngoại vật.
 	+ Boss: dùng rìu để chém, có skill tốc biến truy lùng người chơi, phạm vi hoạt động toàn map, bất tử.
-
+![image](https://drive.google.com/file/d/1sy_2F9UXwzO_oDst2Zceqh9GVgRzmt-D/view)
+![image](https://drive.google.com/file/d/1rxZu4UCJZgtotKLVzzo_f3vp2LcDL8tV/view)
+![image](https://drive.google.com/file/d/1DC0OsjI6umX5ZqLJ12BRxIASfy0LTFwF/view)
 - Item rơi ra khi người chơi hạ gục một con quái, có 2 loại Item:
 	+ thuốc kim cương: hồi phục 100% máu.
 	+ thuốc vương liệm: x2 sát thương tấn công trong 10 giây (không cộng dồn).
-
+![image](https://drive.google.com/file/d/1AE6HkN0nYAtZbzIcou1XFzYN1Ge-Kc4l/view)
 - người chơi thua khi để nhân vật hết máu.
 
 - Ở map thứ 2, khi máu xuống dưới 40%, nhấn E để giảng hòa => Win game.
@@ -30,16 +31,20 @@ Bài tập cuối học phần INT2215
 		+ Tutorial: hướng dẫn
 		+ Sound ON/OFF: bật, tắt âm thanh
 		+ Quit: thoát game
+	![image](https://drive.google.com/file/d/1SVhmmvqHhJNCuW2BTK-Cse38AT2AUJfF/view)
 	- Menu pause, nhấn p để pause game:
 		+ Continue: tiếp tục game
 		+ Menu: quay trở lại Menu chính
 		+ Quit: thoát game
+	![image](https://drive.google.com/file/d/1_1l7Ku1e3Q8rujQjVVwuuPjvbxVr_o6q/view)
 	- Menu game over hiện lên sau khi người chơi thua:
 		+ Menu: quay trở lại Menu chính
 		+ Quit: thoát game
+	![image](https://drive.google.com/file/d/10Z7hnvl1Q4JE6vQUPzQz43Uq1ADOkUtf/view)
 	- Menu game win hiện lên sau khi người chơi giảng hòa thành công:
 		+ Menu: quay trở lại Menu chính
 		+ Quit: thoát game
+	![image](https://drive.google.com/file/d/1piIK0ZIP3mZDk6MnhrE36fe0V4yXbUEP/view)
 - Trong quá trình chơi có thể nhấn Esc hoặc bấm dấu X trên cửa sổ game để thoát game
 
 ## Các kiến thức đã sử dụng
