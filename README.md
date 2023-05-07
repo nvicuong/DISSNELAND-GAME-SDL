@@ -13,13 +13,13 @@ Bài tập cuối học phần INT2215
 	+ Flying eye: di chuyển trong vùng cố định, có khả năng bắn đạn.
 	+ Skeleton: dùng kiếm để chém, phạm vi hoạt động rộng, có khả năng săn lùng người chơi và tránh trường ngoại vật.
 	+ Boss: dùng rìu để chém, có skill tốc biến truy lùng người chơi, phạm vi hoạt động toàn map, bất tử.
-![image](https://drive.google.com/file/d/1sy_2F9UXwzO_oDst2Zceqh9GVgRzmt-D/view)
-![image](https://drive.google.com/file/d/1rxZu4UCJZgtotKLVzzo_f3vp2LcDL8tV/view)
-![image](https://drive.google.com/file/d/1DC0OsjI6umX5ZqLJ12BRxIASfy0LTFwF/view)
+![Screenshot 2023-05-07 095306](https://user-images.githubusercontent.com/112748853/236655885-ce789e06-a6e9-4341-8a47-bb7a70aa4810.png)
+![Screenshot 2023-05-07 095417](https://user-images.githubusercontent.com/112748853/236655896-d0259e34-4406-4298-8c98-e015e341e8d8.png)
+![Screenshot 2023-05-07 095830](https://user-images.githubusercontent.com/112748853/236655912-700db7d7-d9de-4acc-9cd9-34c4146b4d6c.png)
 - Item rơi ra khi người chơi hạ gục một con quái, có 2 loại Item:
 	+ thuốc kim cương: hồi phục 100% máu.
 	+ thuốc vương liệm: x2 sát thương tấn công trong 10 giây (không cộng dồn).
-![image](https://drive.google.com/file/d/1AE6HkN0nYAtZbzIcou1XFzYN1Ge-Kc4l/view)
+![Screenshot 2023-05-07 095748](https://user-images.githubusercontent.com/112748853/236655917-a384719a-0ed9-4fce-868c-159bbed706a4.png)
 - người chơi thua khi để nhân vật hết máu.
 
 - Ở map thứ 2, khi máu xuống dưới 40%, nhấn E để giảng hòa => Win game.
@@ -31,20 +31,20 @@ Bài tập cuối học phần INT2215
 		+ Tutorial: hướng dẫn
 		+ Sound ON/OFF: bật, tắt âm thanh
 		+ Quit: thoát game
-	![image](https://drive.google.com/file/d/1SVhmmvqHhJNCuW2BTK-Cse38AT2AUJfF/view)
+	![Screenshot 2023-05-07 095234](https://user-images.githubusercontent.com/112748853/236655797-d61f8df6-7202-4f36-bf07-23a6ae0afd23.png)
 	- Menu pause, nhấn p để pause game:
 		+ Continue: tiếp tục game
 		+ Menu: quay trở lại Menu chính
 		+ Quit: thoát game
-	![image](https://drive.google.com/file/d/1_1l7Ku1e3Q8rujQjVVwuuPjvbxVr_o6q/view)
+	![Screenshot 2023-05-07 100002](https://user-images.githubusercontent.com/112748853/236655851-25899810-050c-4756-b362-e35a7afd19ce.png)
 	- Menu game over hiện lên sau khi người chơi thua:
 		+ Menu: quay trở lại Menu chính
 		+ Quit: thoát game
-	![image](https://drive.google.com/file/d/10Z7hnvl1Q4JE6vQUPzQz43Uq1ADOkUtf/view)
+	![Screenshot 2023-05-07 100032](https://user-images.githubusercontent.com/112748853/236655866-21abd47f-6f71-4c8a-a672-522aa50fe709.png)
 	- Menu game win hiện lên sau khi người chơi giảng hòa thành công:
 		+ Menu: quay trở lại Menu chính
 		+ Quit: thoát game
-	![image](https://drive.google.com/file/d/1piIK0ZIP3mZDk6MnhrE36fe0V4yXbUEP/view)
+	![Screenshot 2023-05-07 100214](https://user-images.githubusercontent.com/112748853/236655879-1947a611-d0b0-4bb2-824d-b50db23ad348.png)
 - Trong quá trình chơi có thể nhấn Esc hoặc bấm dấu X trên cửa sổ game để thoát game
 
 ## Các kiến thức đã sử dụng
